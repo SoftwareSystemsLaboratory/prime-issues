@@ -1,5 +1,8 @@
 {
     "name": "GH All Issues",
+    "extensions": [
+        "ms-python.python"
+    ],
     "build": {
         "dockerfile": "Dockerfile"
     },
