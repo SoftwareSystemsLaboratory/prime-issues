@@ -1,0 +1,6 @@
+{
+    "name": "GH All Issues",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+}
