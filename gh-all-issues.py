@@ -38,15 +38,9 @@ def createIntervalTree(data: list) -> IntervalTree:
         else:
             closedDate: datetime = parse(datetime.today())
 
-        begin: int = (day0 - createdDate).days
-        end: int = (day0 - closedDate).days
+        begin: int = (createdDate - day0).days
+        end: int = (closedDate - day0).days
 
         tree.addi(begin=begin, end=end, data=issue)
 
     return tree
-
-
-getGHIssues(repo="numpy/numpy", limit=10)
-data = loadJSON()
-
-createIntervalTree(data)
