@@ -43,7 +43,6 @@ def get_argparse() -> ArgumentParser:
 def getGHIssues(
     repo: str,
     limit: int,
-    state: str,
     filename: str,
 ) -> int:
 
