@@ -6,29 +6,48 @@ from subprocess import call
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 
+
 def get_argparse() -> ArgumentParser:
     parser: ArgumentParser = ArgumentParser(
-        prog="Git All Python (CLI Only)",
-        usage="This program outputs the lines of code (LOC) per commit and the delta LOC of a Git repository in JSON format.",
+        prog="GH All issues",
+        usage="This program generates an interval tree from a JSON file containing a GitHub repositories issues.",
     )
     parser.add_argument(
-        "-d",
-        "--directory",
-        help="Directory containing repository root folder (.git)",
-        default=".",
+        "-r",
+        "--repository",
+        help='GitHub repository to be used. Format needs to be "OWNER/REPO". Default is numpy/numpy',
+        default="numpy/numpy",
         type=str,
         required=False,
     )
     parser.add_argument(
-        "-b",
-        "--branch",
-        help="Default branch for analysis to be ran on",
-        default="main",
+        "-l",
+        "--limit",
+        help="The limit of how many issues to get. Default is 100",
+        default=100,
+        type=int,
+        required=False,
+    )
+
+    parser.add_argument(
+        "-o",
+        "--order",
+        help='The chronological order of which issues are gotten. Supported values are either "asc" or "desc". Default is asc',
+        default="asc",
         type=str,
         required=False,
     )
+
     parser.add_argument(
         "-s",
+        "--state",
+        help='The state in which an issue is in. Supported values are either "open", "closed", or "all". Default is all',
+        default="all",
+        type=str,
+        required=False,
+    )
+
+    parser.add_argument(
         "--save-json",
         help="Save analysis to JSON file (EX: --save-json=output.json)",
         type=str,
@@ -36,16 +55,18 @@ def get_argparse() -> ArgumentParser:
     )
     return parser
 
+
 def getGHIssues(
-    repo: str = "",
-    limit: int = 10000,
-    state: str = "all",
-    filename: str = "issues.json",
+    repo: str,
+    limit: int,
+    order: str,
+    state: str,
+    filename: str,
 ) -> int:
     if repo == "":
-        command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-asc"> {filename}'
+        command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-{order}"> {filename}'
     else:
-        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-asc" > {filename}'
+        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-{order}" > {filename}'
 
     return call(command, shell=True)
 
@@ -73,5 +94,3 @@ def createIntervalTree(data: list) -> IntervalTree:
         tree.addi(begin=begin, end=end, data=issue)
 
     return tree
-
-if __name__ == "__main__":
