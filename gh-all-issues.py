@@ -1,4 +1,5 @@
 from subprocess import call
+from json import load
 
 
 def getGHIssues(
@@ -13,3 +14,8 @@ def getGHIssues(
         command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,state" --limit {limit} --state {state} > {filename}'
 
     return call(command, shell=True)
+
+
+def loadJSON(filename: str = "issues.json") -> dict:
+    with open(file=filename, mode="r") as json:
+        return load(json)
