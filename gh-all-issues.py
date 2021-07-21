@@ -94,3 +94,21 @@ def createIntervalTree(data: list) -> IntervalTree:
         tree.addi(begin=begin, end=end, data=issue)
 
     return tree
+
+
+if __name__ == "__main__":
+    args: Namespace = get_argparse().parse_args()
+
+    getGHIssues(
+        repo=args.repository,
+        limit=args.limit,
+        order=args.order,
+        state=args.state,
+        filename=args.save_json,
+    )
+
+    issues: list = loadJSON(filename=args.save_json)
+
+    tree: IntervalTree = createIntervalTree(data=issues)
+
+    print(tree)
