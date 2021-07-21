@@ -1,13 +1,16 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
-from json import load
-from subprocess import call
+from json import load, dumps
 from math import ceil
+
+from os.path import isfile
 
 import dateutil.utils
 from dateutil.parser import parse
 from intervaltree import IntervalTree
-from progress.spinner import MoonSpinner
+from progress.bar import PixelBar
+from requests import get
+from requests.models import Response
 
 
 def get_argparse() -> ArgumentParser:
@@ -43,7 +46,8 @@ def get_argparse() -> ArgumentParser:
 
     parser.add_argument(
         "--save-json",
-        help="Save analysis to JSON file (EX: --save-json=output.json)",
+        help="Save analysis to JSON file. EX: --save-json=issues.json",
+        default="issues.json",
         type=str,
         required=True,
     )
@@ -62,20 +66,35 @@ def getGHIssues(
         "User-Agent": "Metrics-Dashboard",
         "Authorization": f"token {token}",
     }
+    urlTemplate: str = "https://api.github.com/repos/{}/issues?state=all&sort=created&direction=asc&per_page=100&page={}"
+    data = []
+
     requestIterations: int = ceil(limit / 100)
 
-    if repo == "":
-        command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state all --search "sort:created-asc"> {filename}'
-    else:
-        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,number,state" --limit {limit} --state all --search "sort:created-asc" > {filename}'
+    with PixelBar(f"Getting issues from {repo}... ", max=requestIterations) as bar:
+        for iteration in range(requestIterations + 1):
+            if iteration != 0:
+                html: Response = get(
+                    url=urlTemplate.format(repo, iteration), headers=requestHeaders
+                )
+                data += html.json()
+                bar.next()
 
-    print(f"Getting the first {limit} issues for {repo}... ")
-    return call(command, shell=True)
+    if storeJSON(json=data, filename=filename):
+        return len(data)
+    return -1
+
+
+def storeJSON(json: list, filename: str = "issues.json") -> bool:
+    data: str = dumps(json)
+    with open(file=filename, mode="w") as jsonFile:
+        jsonFile.write(data)
+    return isfile(filename)
 
 
 def loadJSON(filename: str = "issues.json") -> list:
-    with open(file=filename, mode="r") as json:
-        return load(json)
+    with open(file=filename, mode="r") as jsonFile:
+        return load(jsonFile)
 
 
 def createIntervalTree(data: list) -> IntervalTree:
@@ -109,8 +128,7 @@ if __name__ == "__main__":
     getGHIssues(
         repo=args.repository,
         limit=args.limit,
-        order=args.order,
-        state=args.state,
+        token=args.token,
         filename=args.save_json,
     )
 
