@@ -67,7 +67,7 @@ def getGHIssues(
         "Authorization": f"token {token}",
     }
     urlTemplate: str = "https://api.github.com/repos/{}/issues?state=all&sort=created&direction=asc&per_page=100&page={}"
-    data = []
+    data: list = []
 
     SKIP_CALL: int = 0
 
@@ -80,17 +80,9 @@ def getGHIssues(
 
         html: Response = get(url=urlTemplate.format(repo, 1), headers=requestHeaders)
 
+        requestIterations: int = getLastPage(response=html)
         data += html.json()
 
-        responseHeaders: CaseInsensitiveDict = html.headers
-        links: str = responseHeaders["Link"]
-        linksSplit: list = links.split(",")
-        lastLink: str = linksSplit[1]
-
-        lastPageIndex: int = lastLink.find("&page=") + 6
-        lastPageRightCaretIndex: int = lastLink.find(">;")
-
-        requestIterations: int = int(lastLink[lastPageIndex:lastPageRightCaretIndex])
     else:
         requestIterations: int = ceil(limit / 100) + 1
 
@@ -112,6 +104,18 @@ def getGHIssues(
     if storeJSON(json=data, filename=filename):
         return len(data)
     return -1
+
+
+def getLastPage(response: Response) -> int:
+    responseHeaders: CaseInsensitiveDict = response.headers
+    links: str = responseHeaders["Link"]
+    linksSplit: list = links.split(",")
+    lastLink: str = linksSplit[1]
+
+    lastPageIndex: int = lastLink.find("&page=") + 6
+    lastPageRightCaretIndex: int = lastLink.find(">;")
+
+    requestIterations: int = int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
 def storeJSON(json: list, filename: str = "issues.json") -> bool:
