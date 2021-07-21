@@ -32,15 +32,6 @@ def get_argparse() -> ArgumentParser:
     )
 
     parser.add_argument(
-        "-o",
-        "--order",
-        help='The chronological order of which issues are gotten. Supported values are either "asc" or "desc". Default is asc',
-        default="asc",
-        type=str,
-        required=False,
-    )
-
-    parser.add_argument(
         "-s",
         "--state",
         help='The state in which an issue is in. Supported values are either "open", "closed", or "all". Default is all',
@@ -61,14 +52,13 @@ def get_argparse() -> ArgumentParser:
 def getGHIssues(
     repo: str,
     limit: int,
-    order: str,
     state: str,
     filename: str,
 ) -> int:
     if repo == "":
-        command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-{order}"> {filename}'
+        command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-asc"> {filename}'
     else:
-        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-{order}" > {filename}'
+        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-asc" > {filename}'
 
     print(f"Getting the first {limit} issues for {repo}... ")
     return call(command, shell=True)
@@ -119,4 +109,4 @@ if __name__ == "__main__":
 
     tree: IntervalTree = createIntervalTree(data=issues)
 
-    print(tree)
+    print(len(tree))
