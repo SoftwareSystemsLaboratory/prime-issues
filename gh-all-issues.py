@@ -2,6 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import load
 from subprocess import call
+from math import ceil
 
 import dateutil.utils
 from dateutil.parser import parse
@@ -22,6 +23,7 @@ def get_argparse() -> ArgumentParser:
         type=str,
         required=False,
     )
+
     parser.add_argument(
         "-l",
         "--limit",
@@ -29,6 +31,14 @@ def get_argparse() -> ArgumentParser:
         default=100,
         type=int,
         required=False,
+    )
+
+    parser.add_argument(
+        "-t",
+        "--token",
+        help="GitHub personal access token",
+        type=str,
+        required=True,
     )
 
     parser.add_argument(
@@ -42,9 +52,17 @@ def get_argparse() -> ArgumentParser:
 
 def getGHIssues(
     repo: str,
+    token: str,
     limit: int,
     filename: str,
 ) -> int:
+
+    requestHeaders: dict = {
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "Metrics-Dashboard",
+        "Authorization": f"token {token}",
+    }
+    requestIterations: int = ceil(limit / 100)
 
     if repo == "":
         command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state all --search "sort:created-asc"> {filename}'
