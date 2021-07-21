@@ -9,9 +9,9 @@ def getGHIssues(
     filename: str = "issues.json",
 ) -> int:
     if repo == "":
-        command: str = f'gh issue list --json "closedAt,createdAt,id,state" --limit {limit} --state {state} > {filename}'
+        command: str = f'gh issue list --json "closedAt,createdAt,id,state" --limit {limit} --state {state} --search "sort:created-asc"> {filename}'
     else:
-        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,state" --limit {limit} --state {state} > {filename}'
+        command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,state" --limit {limit} --state {state} --search "sort:created-asc" > {filename}'
 
     return call(command, shell=True)
 
