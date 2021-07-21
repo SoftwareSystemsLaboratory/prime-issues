@@ -1,4 +1,3 @@
-from os import popen
 from subprocess import call
 
 
