@@ -28,9 +28,9 @@ def get_argparse() -> ArgumentParser:
     )
 
     parser.add_argument(
-        "-l",
-        "--limit",
-        help='The numeric limit of how many issues to get. Default is "all"',
+        "-p",
+        "--page-limit",
+        help='The numeric limit of pages of issues to get. Default is "all"',
         default="all",
         type=str,
         required=False,
@@ -57,7 +57,7 @@ def get_argparse() -> ArgumentParser:
 def getGHIssues(
     repo: str,
     token: str,
-    limit: str,
+    pages: str,
     filename: str,
 ) -> int:
 
@@ -71,7 +71,7 @@ def getGHIssues(
 
     SKIP_CALL: int = 0
 
-    if limit == "all":
+    if pages == "all":
         SKIP_CALL = 1
 
         print(
@@ -84,7 +84,7 @@ def getGHIssues(
         data += html.json()
 
     else:
-        requestIterations: int = ceil(limit / 100) + 1
+        requestIterations: int = ceil(int(pages) / 100)
 
     print(requestIterations)
 
