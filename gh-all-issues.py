@@ -6,6 +6,7 @@ from subprocess import call
 import dateutil.utils
 from dateutil.parser import parse
 from intervaltree import IntervalTree
+from progress.spinner import MoonSpinner
 
 
 def get_argparse() -> ArgumentParser:
@@ -69,6 +70,7 @@ def getGHIssues(
     else:
         command: str = f'gh issue list --repo {repo} --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-{order}" > {filename}'
 
+    print(f"Getting the first {limit} issues for {repo}... ")
     return call(command, shell=True)
 
 
