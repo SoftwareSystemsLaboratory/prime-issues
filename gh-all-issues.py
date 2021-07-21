@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from json import load
 from os import close
 from subprocess import call
@@ -27,17 +27,23 @@ def loadJSON(filename: str = "issues.json") -> list:
 
 
 def createIntervalTree(data: list) -> IntervalTree:
-    day0: str = data[0]["createdAt"]
-    day0: datetime = parse(day0)
+    tree: IntervalTree = IntervalTree()
+    day0: datetime = parse(data[0]["createdAt"])
 
     for issue in data:
-        closedDate: str = issue["createdAt"]
-        closedDate: datetime = parse(closedDate)
+        createdDate: datetime = parse(issue["createdAt"])
 
-        dateDiff: int = (closedDate - day0).days
+        if issue["state"] == "CLOSED":
+            closedDate: datetime = parse(issue["closedAt"])
+        else:
+            closedDate: datetime = parse(datetime.today())
 
-    tree: IntervalTree = IntervalTree()
-    # for issue in data:
+        begin: int = (day0 - createdDate).days
+        end: int = (day0 - closedDate).days
+
+        tree.addi(begin=begin, end=end, data=issue)
+
+    return tree
 
 
 getGHIssues(repo="numpy/numpy", limit=10)
