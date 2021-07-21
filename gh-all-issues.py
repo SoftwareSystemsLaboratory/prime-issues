@@ -1,5 +1,9 @@
-from subprocess import call
+from datetime import datetime
 from json import load
+from subprocess import call
+
+import dateutil.parser
+from intervaltree import IntervalTree
 
 
 def getGHIssues(
@@ -16,9 +20,21 @@ def getGHIssues(
     return call(command, shell=True)
 
 
-def loadJSON(filename: str = "issues.json") -> dict:
+def loadJSON(filename: str = "issues.json") -> list:
     with open(file=filename, mode="r") as json:
         return load(json)
 
 
+def createIntervalTree(data: list) -> IntervalTree:
+    day0: str = data[0]["createdAt"]
+    day0: datetime = dateutil.parser.parse(day0)
+
+    tree: IntervalTree = IntervalTree()
+    # for issue in data:
+    print(type(day0))
+
+
 getGHIssues(repo="numpy/numpy", limit=10)
+data = loadJSON()
+
+createIntervalTree(data)
