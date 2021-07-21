@@ -32,15 +32,6 @@ def get_argparse() -> ArgumentParser:
     )
 
     parser.add_argument(
-        "-s",
-        "--state",
-        help='The state in which an issue is in. Supported values are either "open", "closed", or "all". Default is all',
-        default="all",
-        type=str,
-        required=False,
-    )
-
-    parser.add_argument(
         "--save-json",
         help="Save analysis to JSON file (EX: --save-json=output.json)",
         type=str,
@@ -55,6 +46,7 @@ def getGHIssues(
     state: str,
     filename: str,
 ) -> int:
+
     if repo == "":
         command: str = f'gh issue list --json "closedAt,createdAt,id,number,state" --limit {limit} --state {state} --search "sort:created-asc"> {filename}'
     else:
