@@ -1,6 +1,5 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime
 from json import load
-from os import close
 from subprocess import call
 
 from dateutil.parser import parse
