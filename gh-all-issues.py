@@ -30,9 +30,9 @@ def get_argparse() -> ArgumentParser:
     parser.add_argument(
         "-l",
         "--limit",
-        help="The limit of how many issues to get. Default is 100",
-        default=100,
-        type=int,
+        help='The numeric limit of how many issues to get. Default is "all"',
+        default="all",
+        type=str,
         required=False,
     )
 
