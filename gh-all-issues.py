@@ -9,8 +9,8 @@ import dateutil.utils
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from progress.bar import PixelBar
-from requests import get
-from requests.models import Response
+from requests import get, Response
+from requests.models import CaseInsensitiveDict
 
 
 def get_argparse() -> ArgumentParser:
@@ -57,23 +57,52 @@ def get_argparse() -> ArgumentParser:
 def getGHIssues(
     repo: str,
     token: str,
-    limit: int,
+    limit: str,
     filename: str,
 ) -> int:
 
     requestHeaders: dict = {
         "Accept": "application/vnd.github.v3+json",
-        "User-Agent": "Metrics-Dashboard",
+        "User-Agent": "gh-all-issues",
         "Authorization": f"token {token}",
     }
     urlTemplate: str = "https://api.github.com/repos/{}/issues?state=all&sort=created&direction=asc&per_page=100&page={}"
     data = []
 
-    requestIterations: int = ceil(limit / 100)
+    SKIP_CALL: int = 0
+
+    if limit == "all":
+        SKIP_CALL = 1
+
+        print(
+            f"Getting {repo}'s first issue response to determine iteration amount... '"
+        )
+
+        html: Response = get(url=urlTemplate.format(repo, 1), headers=requestHeaders)
+
+        data += html.json()
+
+        responseHeaders: CaseInsensitiveDict = html.headers
+        links: str = responseHeaders["Link"]
+        linksSplit: list = links.split(",")
+        lastLink: str = linksSplit[1]
+
+        lastPageIndex: int = lastLink.find("&page=") + 6
+        lastPageRightCaretIndex: int = lastLink.find(">;")
+
+        requestIterations: int = int(lastLink[lastPageIndex:lastPageRightCaretIndex])
+    else:
+        requestIterations: int = ceil(limit / 100) + 1
+
+    print(requestIterations)
 
     with PixelBar(f"Getting issues from {repo}... ", max=requestIterations) as bar:
-        for iteration in range(requestIterations + 1):
-            if iteration != 0:
+
+        if SKIP_CALL == 1:
+            bar.next()
+
+        for iteration in range(requestIterations - SKIP_CALL):
+            if iteration > SKIP_CALL:
                 html: Response = get(
                     url=urlTemplate.format(repo, iteration), headers=requestHeaders
                 )
