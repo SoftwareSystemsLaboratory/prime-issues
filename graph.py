@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import load
 from os.path import exists
-from typing import KeysView
+from typing import Any, KeysView
 
 import matplotlib.pyplot as plt
 from dateutil.parser import parse
@@ -40,7 +40,7 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
     today: datetime = datetime.now(tz=None)
 
-    with PixelBar(f"Creating interval tree from {filename}", max=len(data)) as pb:
+    with PixelBar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
         for issue in data:
             createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
 
@@ -81,32 +81,68 @@ def plot_OpenIssuesPerDay_Line(
 
     tempData: dict = {startDay: len(tree.at(startDay)), endDay: len(tree.at(endDay))}
 
-    data: dict = fillDict(dictionary=tempData, tree=tree)
+    data: dict = fillDictBasedOnKeyValue(
+        dictionary=tempData, tree=tree, key="state", value="open"
+    )
 
-    plt.scatter(data.keys(), data.values())
     plt.plot(data.keys(), data.values())
     figure.savefig(filename)
 
     return exists(filename)
 
 
-def fillDict(dictionary: dict, tree: IntervalTree) -> dict:
+def plot_ClosedIssuesPerDay_Line(
+    tree: IntervalTree, filename: str = "closed_issues_per_day_line.png"
+):
+    figure: Figure = plt.figure()
+
+    plt.title("Number of Closed Issues Per Day")
+    plt.ylabel("Number of Issues")
+    plt.xlabel("Day")
+
+    startDay: int = tree.begin()
+    endDay: int = tree.end()
+
+    if len(tree.at(endDay)) == 0:
+        endDay -= 1
+
+    tempData: dict = {startDay: len(tree.at(startDay)), endDay: len(tree.at(endDay))}
+
+    data: dict = fillDictBasedOnKeyValue(
+        dictionary=tempData, tree=tree, key="state", value="closed"
+    )
+
+    plt.plot(data.keys(), data.values())
+    figure.savefig(filename)
+
+    return exists(filename)
+
+
+def fillDictBasedOnKeyValue(
+    dictionary: dict, tree: IntervalTree, key: str, value: Any
+) -> dict:
     data: dict = {}
     keys: KeysView = dictionary.keys()
 
     maxKeyValue: int = max(keys)
     minKeyValue: int = min(keys)
 
-    for x in range(minKeyValue, maxKeyValue):
-        try:
-            data[x] = dictionary[x]
-        except KeyError:
-            count = 0
-            interval: IntervalTree
-            for interval in tree.at(x):
-                if interval.data["state"] == "open":
-                    count += 1
-            data[x] = count
+    with PixelBar(
+        f'Getting the total number of "{key} = {value}" issues per day... ',
+        max=maxKeyValue,
+    ) as pb:
+        for x in range(minKeyValue, maxKeyValue):
+            try:
+                data[x] = dictionary[x]
+            except KeyError:
+                count = 0
+                interval: IntervalTree
+                for interval in tree.at(x):
+                    if interval.data[key] == value:
+                        count += 1
+                data[x] = count
+
+            pb.next()
 
     return data
 
@@ -120,3 +156,4 @@ if __name__ == "__main__":
     tree: IntervalTree = createIntervalTree(data=jsonData, filename=args.input)
 
     plot_OpenIssuesPerDay_Line(tree=tree)
+    plot_ClosedIssuesPerDay_Line(tree=tree)
