@@ -1,9 +1,23 @@
+from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import load
-from math import ceil
 
 from dateutil.parser import parse
 from intervaltree import IntervalTree
+
+
+def get_argparse() -> Namespace:
+    parser: ArgumentParser = ArgumentParser(
+        prog="Convert Output",
+        usage="This program converts a JSON file into various different formats.",
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="The input JSON file that is to be converted",
+        type=str,
+        required=True,
+    )
 
 
 def loadJSON(filename: str = "issues.json") -> list:
