@@ -9,6 +9,8 @@ from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
 
+from progress.bar import PixelBar
+
 
 def get_argparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
@@ -32,35 +34,38 @@ def loadJSON(filename: str = "issues.json") -> list:
         return load(jsonFile)
 
 
-def createIntervalTree(data: list) -> IntervalTree:
+def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTree:
     tree: IntervalTree = IntervalTree()
 
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
     today: datetime = datetime.now(tz=None)
 
-    for issue in data:
-        createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
+    with PixelBar(f"Creating interval tree from {filename}", max=len(data)) as pb:
+        for issue in data:
+            createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
 
-        if issue["state"] == "closed":
-            closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-        else:
-            closedDate: datetime = today
+            if issue["state"] == "closed":
+                closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
+            else:
+                closedDate: datetime = today
 
-        begin: int = (createdDate - day0).days
-        end: int = (closedDate - day0).days
+            begin: int = (createdDate - day0).days
+            end: int = (closedDate - day0).days
 
-        try:
-            issue["endDayOffset"] = 0
-            tree.addi(begin=begin, end=end, data=issue)
-        except ValueError:
-            issue["endDayOffset"] = 1
-            tree.addi(begin=begin, end=end + 1, data=issue)
+            try:
+                issue["endDayOffset"] = 0
+                tree.addi(begin=begin, end=end, data=issue)
+            except ValueError:
+                issue["endDayOffset"] = 1
+                tree.addi(begin=begin, end=end + 1, data=issue)
+
+            pb.next()
 
     return tree
 
 
-def plot_OpenIssuesPerDay_Bar(
-    tree: IntervalTree, filename: str = "open_issues_per_day_bar.png"
+def plot_OpenIssuesPerDay_Line(
+    tree: IntervalTree, filename: str = "open_issues_per_day_line.png"
 ):
     figure: Figure = plt.figure()
 
@@ -78,7 +83,8 @@ def plot_OpenIssuesPerDay_Bar(
 
     data: dict = fillDict(dictionary=tempData, tree=tree)
 
-    plt.bar(data.keys(), data.values())
+    plt.scatter(data.keys(), data.values())
+    plt.plot(data.keys(), data.values())
     figure.savefig(filename)
 
     return exists(filename)
@@ -111,6 +117,6 @@ if __name__ == "__main__":
 
     jsonData: list = loadJSON(filename=args.input)
 
-    tree: IntervalTree = createIntervalTree(data=jsonData)
+    tree: IntervalTree = createIntervalTree(data=jsonData, filename=args.input)
 
-    plot_OpenIssuesPerDay_Bar(tree=tree)
+    plot_OpenIssuesPerDay_Line(tree=tree)
