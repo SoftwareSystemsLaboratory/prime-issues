@@ -60,6 +60,7 @@ def getGHIssues(
     pages: str,
     filename: str,
 ) -> int:
+    SKIP_CALL: bool = False
 
     requestHeaders: dict = {
         "Accept": "application/vnd.github.v3+json",
@@ -68,8 +69,6 @@ def getGHIssues(
     }
     urlTemplate: str = "https://api.github.com/repos/{}/issues?state=all&sort=created&direction=asc&per_page=100&page={}"
     data: list = []
-
-    SKIP_CALL: int = 0
 
     if pages == "all":
         SKIP_CALL = 1
@@ -86,18 +85,23 @@ def getGHIssues(
     else:
         requestIterations: int = ceil(int(pages) / 100)
 
-    print(requestIterations)
+    if requestIterations < 2:
+        requestIterations = 2
 
-    with PixelBar(f"Getting issues from {repo}... ", max=requestIterations) as bar:
+    with PixelBar(
+        f"Getting issues from {repo}... ", max=requestIterations - SKIP_CALL
+    ) as bar:
 
-        if SKIP_CALL == 1:
+        badPages: int = 0
+        if SKIP_CALL:
+            badPages += 1
             bar.next()
 
-        for iteration in range(requestIterations - SKIP_CALL):
-            if iteration > SKIP_CALL:
-                html: Response = get(
-                    url=urlTemplate.format(repo, iteration), headers=requestHeaders
-                )
+        for iteration in range(requestIterations):
+            apiCall: str = urlTemplate.format(repo, iteration)
+
+            if iteration > badPages:
+                html: Response = get(url=apiCall, headers=requestHeaders)
                 data += html.json()
                 bar.next()
 
@@ -108,14 +112,18 @@ def getGHIssues(
 
 def getLastPage(response: Response) -> int:
     responseHeaders: CaseInsensitiveDict = response.headers
-    links: str = responseHeaders["Link"]
+    try:
+        links: str = responseHeaders["Link"]
+    except KeyError:
+        return 1
+
     linksSplit: list = links.split(",")
     lastLink: str = linksSplit[1]
 
     lastPageIndex: int = lastLink.find("&page=") + 6
     lastPageRightCaretIndex: int = lastLink.find(">;")
 
-    requestIterations: int = int(lastLink[lastPageIndex:lastPageRightCaretIndex])
+    return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
 def storeJSON(json: list, filename: str = "issues.json") -> bool:
@@ -160,7 +168,7 @@ if __name__ == "__main__":
 
     getGHIssues(
         repo=args.repository,
-        limit=args.limit,
+        pages=args.page_limit,
         token=args.token,
         filename=args.save_json,
     )
