@@ -1,9 +1,13 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import load
+from os.path import exists
+from typing import KeysView
 
+import matplotlib.pyplot as plt
 from dateutil.parser import parse
 from intervaltree import IntervalTree
+from matplotlib.figure import Figure
 
 
 def get_argparse() -> Namespace:
@@ -55,6 +59,52 @@ def createIntervalTree(data: list) -> IntervalTree:
     return tree
 
 
+def plot_OpenIssuesPerDay_Bar(
+    tree: IntervalTree, filename: str = "open_issues_per_day_bar.png"
+):
+    figure: Figure = plt.figure()
+
+    plt.title("Number of Open Issues Per Day")
+    plt.ylabel("Number of Issues")
+    plt.xlabel("Day")
+
+    startDay: int = tree.begin()
+    endDay: int = tree.end()
+
+    if len(tree.at(endDay)) == 0:
+        endDay -= 1
+
+    tempData: dict = {startDay: len(tree.at(startDay)), endDay: len(tree.at(endDay))}
+
+    data: dict = fillDict(dictionary=tempData, tree=tree)
+
+    plt.bar(data.keys(), data.values())
+    figure.savefig(filename)
+
+    return exists(filename)
+
+
+def fillDict(dictionary: dict, tree: IntervalTree) -> dict:
+    data: dict = {}
+    keys: KeysView = dictionary.keys()
+
+    maxKeyValue: int = max(keys)
+    minKeyValue: int = min(keys)
+
+    for x in range(minKeyValue, maxKeyValue):
+        try:
+            data[x] = dictionary[x]
+        except KeyError:
+            count = 0
+            interval: IntervalTree
+            for interval in tree.at(x):
+                if interval.data["state"] == "open":
+                    count += 1
+            data[x] = count
+
+    return data
+
+
 if __name__ == "__main__":
 
     args = get_argparse()
@@ -62,4 +112,5 @@ if __name__ == "__main__":
     jsonData: list = loadJSON(filename=args.input)
 
     tree: IntervalTree = createIntervalTree(data=jsonData)
-    print(type(jsonData))
+
+    plot_OpenIssuesPerDay_Bar(tree=tree)
