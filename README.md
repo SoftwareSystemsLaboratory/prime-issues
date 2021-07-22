@@ -23,6 +23,13 @@ The present implementation assumes a GitHub hosted project.
 * `-t, --token`: GitHub personal access token
 * `-s, --save-json`: Save analysis to JSON file
 
+. *(Optional Step)* To convert the data non-destructively to a `CSV` or `TSV`, run `python convertOutput --input <filename.json> --csv --tsv`
+
+**Availible arguements**
+* `-i, --input`: The input `json` file to be converted
+* `--csv`: Flag to output a `CSV` file with the filename. EX: `filename.csv`
+* * `--tsv`: Flag to output a `TSV` file with the filename. EX: `filename.tsv`
+
 ## What You'll See
 
 ### Exported JSON file from `gh-all-issues.py`
