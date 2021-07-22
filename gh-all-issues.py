@@ -27,15 +27,6 @@ def get_argparse() -> ArgumentParser:
     )
 
     parser.add_argument(
-        "-p",
-        "--page-limit",
-        help='The numeric limit of pages of issues to get. Default is "all"',
-        default="all",
-        type=str,
-        required=False,
-    )
-
-    parser.add_argument(
         "-t",
         "--token",
         help="GitHub personal access token",
@@ -44,6 +35,7 @@ def get_argparse() -> ArgumentParser:
     )
 
     parser.add_argument(
+        "-s",
         "--save-json",
         help="Save analysis to JSON file. EX: --save-json=issues.json",
         default="issues.json",
@@ -56,55 +48,45 @@ def get_argparse() -> ArgumentParser:
 def getGHIssues(
     repo: str,
     token: str,
-    pages: str,
     filename: str,
 ) -> int:
-    SKIP_CALL: bool = False
 
+    data: list = []
     requestHeaders: dict = {
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "gh-all-issues",
         "Authorization": f"token {token}",
     }
     urlTemplate: str = "https://api.github.com/repos/{}/issues?state=all&sort=created&direction=asc&per_page=100&page={}"
-    data: list = []
 
-    if pages == "all":
-        SKIP_CALL = 1
+    print(f"Getting {repo}'s first issue response to determine iteration amount... '")
 
-        print(
-            f"Getting {repo}'s first issue response to determine iteration amount... '"
-        )
+    html: Response = get(url=urlTemplate.format(repo, 1), headers=requestHeaders)
 
-        html: Response = get(url=urlTemplate.format(repo, 1), headers=requestHeaders)
+    requestIterations: int = getLastPage(response=html)
 
-        requestIterations: int = getLastPage(response=html)
-        data += html.json()
+    # TODO: Remove pull requests
 
-    else:
-        requestIterations: int = ceil(int(pages) / 100)
+    data += html.json()
 
     pixelBarMax: int = requestIterations
 
-    if requestIterations < 2:
-        requestIterations = 2
+    with PixelBar(f"Getting issues from {repo}... ", max=pixelBarMax) as bar:
+        bar.next()
 
-    with PixelBar(
-        f"Getting issues from {repo}... ", max=pixelBarMax - SKIP_CALL
-    ) as bar:
+        if requestIterations != 1:
+            for iteration in range(requestIterations + 1):
 
-        badPages: int = 0
-        if SKIP_CALL:
-            badPages += 1
-            bar.next()
+                if iteration > 1:
+                    apiCall: str = urlTemplate.format(repo, iteration)
+                    html: Response = get(url=apiCall, headers=requestHeaders)
 
-        for iteration in range(requestIterations):
-            apiCall: str = urlTemplate.format(repo, iteration)
+                    jsonRaw: dict = html.json()
 
-            if iteration > badPages:
-                html: Response = get(url=apiCall, headers=requestHeaders)
-                data += html.json()
-                bar.next()
+                    # TODO : Remove pull requests
+
+                    data += jsonRaw
+                    bar.next()
 
     if storeJSON(json=data, filename=filename):
         return len(data)
@@ -170,7 +152,6 @@ if __name__ == "__main__":
 
     getGHIssues(
         repo=args.repository,
-        pages=args.page_limit,
         token=args.token,
         filename=args.save_json,
     )
