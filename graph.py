@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
-
 from progress.bar import PixelBar
 
 
