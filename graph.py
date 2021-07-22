@@ -65,7 +65,8 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
 
 
 def plot_OpenIssuesPerDay_Line(
-    tree: IntervalTree, filename: str = "open_issues_per_day_line.png"
+    pregeneratedData: dict = None,
+    filename: str = "open_issues_per_day_line.png",
 ):
     figure: Figure = plt.figure()
 
@@ -73,17 +74,7 @@ def plot_OpenIssuesPerDay_Line(
     plt.ylabel("Number of Issues")
     plt.xlabel("Day")
 
-    startDay: int = tree.begin()
-    endDay: int = tree.end()
-
-    if len(tree.at(endDay)) == 0:
-        endDay -= 1
-
-    tempData: dict = {startDay: len(tree.at(startDay)), endDay: len(tree.at(endDay))}
-
-    data: dict = fillDictBasedOnKeyValue(
-        dictionary=tempData, tree=tree, key="state", value="open"
-    )
+    data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
     figure.savefig(filename)
@@ -92,7 +83,8 @@ def plot_OpenIssuesPerDay_Line(
 
 
 def plot_ClosedIssuesPerDay_Line(
-    tree: IntervalTree, filename: str = "closed_issues_per_day_line.png"
+    pregeneratedData: dict = None,
+    filename: str = "closed_issues_per_day_line.png",
 ):
     figure: Figure = plt.figure()
 
@@ -100,19 +92,31 @@ def plot_ClosedIssuesPerDay_Line(
     plt.ylabel("Number of Issues")
     plt.xlabel("Day")
 
-    startDay: int = tree.begin()
-    endDay: int = tree.end()
-
-    if len(tree.at(endDay)) == 0:
-        endDay -= 1
-
-    tempData: dict = {startDay: len(tree.at(startDay)), endDay: len(tree.at(endDay))}
-
-    data: dict = fillDictBasedOnKeyValue(
-        dictionary=tempData, tree=tree, key="state", value="closed"
-    )
+    data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
+    figure.savefig(filename)
+
+    return exists(filename)
+
+
+def plot_OpenClosedIssuesPerDay_Line(
+    pregeneratedData_OpenIssues: dict = None,
+    pregeneratedData_ClosedIssues: dict = None,
+    filename: str = "open_closed_issues_per_day_line.png",
+):
+    figure: Figure = plt.figure()
+
+    plt.title("Number of Issues Per Day")
+    plt.ylabel("Number of Issues")
+    plt.xlabel("Day")
+
+    openData: dict = pregeneratedData_OpenIssues
+    closedData: dict = pregeneratedData_ClosedIssues
+
+    plt.plot(openData.keys(), openData.values(), color="blue")
+    plt.plot(closedData.keys(), closedData.values(), color="red")
+
     figure.savefig(filename)
 
     return exists(filename)
@@ -155,5 +159,25 @@ if __name__ == "__main__":
 
     tree: IntervalTree = createIntervalTree(data=jsonData, filename=args.input)
 
-    plot_OpenIssuesPerDay_Line(tree=tree)
-    plot_ClosedIssuesPerDay_Line(tree=tree)
+    startDay: int = tree.begin()
+    endDay: int = tree.end()
+
+    if len(tree.at(endDay)) == 0:
+        endDay -= 1
+
+    baseDict: dict = {startDay: len(tree.at(startDay)), endDay: len(tree.at(endDay))}
+
+    openIssues: dict = fillDictBasedOnKeyValue(
+        dictionary=baseDict, tree=tree, key="state", value="open"
+    )
+
+    closedIssues: dict = fillDictBasedOnKeyValue(
+        dictionary=baseDict, tree=tree, key="state", value="closed"
+    )
+
+    plot_OpenIssuesPerDay_Line(pregeneratedData=openIssues)
+    plot_ClosedIssuesPerDay_Line(pregeneratedData=closedIssues)
+    plot_OpenClosedIssuesPerDay_Line(
+        pregeneratedData_ClosedIssues=closedIssues,
+        pregeneratedData_OpenIssues=openIssues,
+    )
