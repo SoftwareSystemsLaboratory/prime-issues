@@ -4,7 +4,6 @@ from json import dumps, load
 from math import ceil
 from os.path import exists
 
-import dateutil.utils
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from progress.bar import PixelBar
