@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
+
 from progress.bar import PixelBar
 
 
@@ -91,7 +92,7 @@ def plot_OpenIssuesPerDay_Line(
 
 
 def plot_ClosedIssuesPerDay_Line(
-    tree: IntervalTree, filename: str =Open "closed_issues_per_day_line.png"
+    tree: IntervalTree, filename: str = "closed_issues_per_day_line.png"
 ):
     figure: Figure = plt.figure()
 
