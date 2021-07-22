@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import dumps, load
 from math import ceil
-from os.path import isfile
+from os.path import exists
 
 import dateutil.utils
 from dateutil.parser import parse
@@ -131,7 +131,7 @@ def storeJSON(json: list, filename: str = "issues.json") -> bool:
     data: str = dumps(json)
     with open(file=filename, mode="w") as jsonFile:
         jsonFile.write(data)
-    return isfile(filename)
+    return exists(filename)
 
 
 def loadJSON(filename: str = "issues.json") -> list:
