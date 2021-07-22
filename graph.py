@@ -114,8 +114,9 @@ def plot_OpenClosedIssuesPerDay_Line(
     openData: dict = pregeneratedData_OpenIssues
     closedData: dict = pregeneratedData_ClosedIssues
 
-    plt.plot(openData.keys(), openData.values(), color="blue")
-    plt.plot(closedData.keys(), closedData.values(), color="red")
+    plt.plot(openData.keys(), openData.values(), color="blue", label="Open Issues")
+    plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
+    plt.legend()
 
     figure.savefig(filename)
 
