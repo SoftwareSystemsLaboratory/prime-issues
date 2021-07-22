@@ -1,15 +1,14 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
-from json import load, dumps
+from json import dumps, load
 from math import ceil
-
 from os.path import isfile
 
 import dateutil.utils
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from progress.bar import PixelBar
-from requests import get, Response
+from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
 
@@ -85,11 +84,13 @@ def getGHIssues(
     else:
         requestIterations: int = ceil(int(pages) / 100)
 
+    pixelBarMax: int = requestIterations
+
     if requestIterations < 2:
         requestIterations = 2
 
     with PixelBar(
-        f"Getting issues from {repo}... ", max=requestIterations - SKIP_CALL
+        f"Getting issues from {repo}... ", max=pixelBarMax - SKIP_CALL
     ) as bar:
 
         badPages: int = 0
@@ -140,14 +141,15 @@ def loadJSON(filename: str = "issues.json") -> list:
 
 def createIntervalTree(data: list) -> IntervalTree:
     tree: IntervalTree = IntervalTree()
-    day0: datetime = parse(data[0]["createdAt"]).replace(tzinfo=None)
+
+    day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
     today: datetime = dateutil.utils.today().replace(tzinfo=None)
 
     for issue in data:
-        createdDate: datetime = parse(issue["createdAt"]).replace(tzinfo=None)
+        createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
 
-        if issue["state"] == "CLOSED":
-            closedDate: datetime = parse(issue["closedAt"]).replace(tzinfo=None)
+        if issue["state"] == "closed":
+            closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
         else:
             closedDate: datetime = today
 
