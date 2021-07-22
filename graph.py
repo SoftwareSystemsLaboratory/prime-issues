@@ -11,6 +11,7 @@ def get_argparse() -> Namespace:
         prog="Graph GitHub Issues",
         usage="This program outputs a series of graphs based on GitHub issue data.",
     )
+
     parser.add_argument(
         "-i",
         "--input",
@@ -18,6 +19,8 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
+
+    return parser.parse_args()
 
 
 def loadJSON(filename: str = "issues.json") -> list:
@@ -50,3 +53,13 @@ def createIntervalTree(data: list) -> IntervalTree:
             tree.addi(begin=begin, end=end + 1, data=issue)
 
     return tree
+
+
+if __name__ == "__main__":
+
+    args = get_argparse()
+
+    jsonData: list = loadJSON(filename=args.input)
+
+    tree: IntervalTree = createIntervalTree(data=jsonData)
+    print(type(jsonData))
