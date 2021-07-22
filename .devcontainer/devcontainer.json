@@ -3,7 +3,5 @@
     "extensions": [
         "ms-python.python"
     ],
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
+    "image": "python:3.9.6-buster"
 }
