@@ -8,13 +8,13 @@ from intervaltree import IntervalTree
 
 def get_argparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
-        prog="Convert Output",
-        usage="This program converts a JSON file into various different formats.",
+        prog="Graph GitHub Issues",
+        usage="This program outputs a series of graphs based on GitHub issue data.",
     )
     parser.add_argument(
         "-i",
         "--input",
-        help="The input JSON file that is to be converted",
+        help="The input JSON file that is to be used for graphing",
         type=str,
         required=True,
     )
