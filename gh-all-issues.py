@@ -65,9 +65,10 @@ def getGHIssues(
 
     requestIterations: int = getLastPage(response=html)
 
-    # TODO: Remove pull requests
-
-    data += html.json()
+    json: dict = html.json()
+    for index in range(len(json)):
+        if testIfPullRequest(json[index]) is False:
+            data.append(json[index])
 
     pixelBarMax: int = requestIterations
 
@@ -81,11 +82,12 @@ def getGHIssues(
                     apiCall: str = urlTemplate.format(repo, iteration)
                     html: Response = get(url=apiCall, headers=requestHeaders)
 
-                    jsonRaw: dict = html.json()
-
                     # TODO : Remove pull requests
+                    json: dict = html.json()
+                    for index in range(len(json)):
+                        if testIfPullRequest(json[index]) is False:
+                            data.append(json[index])
 
-                    data += jsonRaw
                     bar.next()
 
     if storeJSON(json=data, filename=filename):
@@ -109,6 +111,14 @@ def getLastPage(response: Response) -> int:
     return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
+def testIfPullRequest(dictionary: dict) -> bool:
+    try:
+        dictionary["pull_request"]
+        return True
+    except KeyError:
+        return False
+
+
 def storeJSON(json: list, filename: str = "issues.json") -> bool:
     data: str = dumps(json)
     with open(file=filename, mode="w") as jsonFile:
@@ -125,7 +135,7 @@ def createIntervalTree(data: list) -> IntervalTree:
     tree: IntervalTree = IntervalTree()
 
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
-    today: datetime = dateutil.utils.today().replace(tzinfo=None)
+    today: datetime = datetime.now(tz=None)
 
     for issue in data:
         createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
@@ -139,6 +149,7 @@ def createIntervalTree(data: list) -> IntervalTree:
         end: int = (closedDate - day0).days
 
         try:
+            issue["endDayOffset"] = 0
             tree.addi(begin=begin, end=end, data=issue)
         except ValueError:
             issue["endDayOffset"] = 1
