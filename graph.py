@@ -113,7 +113,6 @@ def plot_OpenClosedIssuesPerDay_Line(
 
     plt.plot(openData.keys(), openData.values(), color="blue", label="Open Issues")
     plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
-    plt.scatter(closedData.keys(), closedData.values(), color="red")
     plt.legend()
 
     figure.savefig(filename)
