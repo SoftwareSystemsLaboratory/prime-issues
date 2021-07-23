@@ -35,9 +35,7 @@ def loadJSON(filename: str = "issues.json") -> list:
 
 def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTree:
     tree: IntervalTree = IntervalTree()
-
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
-    today: datetime = datetime.now(tz=None)
 
     with PixelBar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
         for issue in data:
@@ -46,7 +44,7 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
             if issue["state"] == "closed":
                 closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
             else:
-                closedDate: datetime = today
+                closedDate: datetime = datetime.now(tz=None)
 
             begin: int = (createdDate - day0).days
             end: int = (closedDate - day0).days
@@ -115,6 +113,7 @@ def plot_OpenClosedIssuesPerDay_Line(
 
     plt.plot(openData.keys(), openData.values(), color="blue", label="Open Issues")
     plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
+    plt.scatter(closedData.keys(), closedData.values(), color="red")
     plt.legend()
 
     figure.savefig(filename)
