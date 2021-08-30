@@ -77,7 +77,6 @@ def getGHIssues(
                     apiCall: str = urlTemplate.format(repo, iteration)
                     html: Response = get(url=apiCall, headers=requestHeaders)
 
-                    # TODO : Remove pull requests
                     json: dict = html.json()
                     for index in range(len(json)):
                         if testIfPullRequest(json[index]) is False:
@@ -87,7 +86,7 @@ def getGHIssues(
 
     if storeJSON(json=data, filename=filename):
         return len(data)
-    return -1
+    return 1
 
 
 def getLastPage(response: Response) -> int:
