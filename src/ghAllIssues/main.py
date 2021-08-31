@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
-from libs.ghAllIssues import getGHIssues
-from libs.graph import main as graphMain
+from ghAllIssues.libs.ghAllIssues import getGHIssues
+from ghAllIssues.libs.graph import main as graphMain
 
 
 def get_argparse() -> Namespace:
