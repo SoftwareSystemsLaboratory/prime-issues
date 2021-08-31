@@ -1,5 +1,7 @@
-import os
 from argparse import ArgumentParser, Namespace
+
+from libs.ghAllIssues import getGHIssues
+from libs.graph import main as graphMain
 
 
 def get_argparse() -> Namespace:
@@ -39,8 +41,12 @@ def get_argparse() -> Namespace:
 def main() -> None:
     args: Namespace = get_argparse()
 
-    ghAllIssues_cmd = f"python3 ./libs/ghAllIssues.py -r {args.repository} -s {args.save_json} -t {args.token}"
-    graph_cmd = f"python3 ./libs/graph -i {args.save_json}"
+    print(
+        getGHIssues(
+            repo=args.repository,
+            token=args.token,
+            filename=args.save_json,
+        )
+    )
 
-    os.system(ghAllIssues_cmd)
-    os.system(graph_cmd)
+    graphMain(jsonFile=args.repository)

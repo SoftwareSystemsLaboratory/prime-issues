@@ -149,13 +149,12 @@ def fillDictBasedOnKeyValue(
     return data
 
 
-if __name__ == "__main__":
-
+def main(jsonFile: str) -> None:
     args = get_argparse()
 
-    jsonData: list = loadJSON(filename=args.input)
+    jsonData: list = loadJSON(filename=jsonFile)
 
-    tree: IntervalTree = createIntervalTree(data=jsonData, filename=args.input)
+    tree: IntervalTree = createIntervalTree(data=jsonData, filename=jsonFile)
 
     startDay: int = tree.begin()
     endDay: int = tree.end()
@@ -179,3 +178,9 @@ if __name__ == "__main__":
         pregeneratedData_ClosedIssues=closedIssues,
         pregeneratedData_OpenIssues=openIssues,
     )
+
+
+if __name__ == "__main__":
+    args: Namespace = get_argparse()
+
+    main(jsonFile=args.input)
