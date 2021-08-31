@@ -7,7 +7,7 @@ from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
 
-def get_argparse() -> ArgumentParser:
+def get_argparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="GH All issues",
         usage="This program generates an interval tree from a JSON file containing a GitHub repositories issues.",
@@ -37,7 +37,7 @@ def get_argparse() -> ArgumentParser:
         type=str,
         required=True,
     )
-    return parser
+    return parser.parse_args()
 
 
 def getGHIssues(
@@ -121,7 +121,7 @@ def storeJSON(json: list, filename: str = "issues.json") -> bool:
 
 
 if __name__ == "__main__":
-    args: Namespace = get_argparse().parse_args()
+    args: Namespace = get_argparse()
 
     print(
         getGHIssues(

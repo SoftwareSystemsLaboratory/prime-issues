@@ -32,3 +32,7 @@ def get_argparse() -> Namespace:
         required=True,
     )
     return parser.parse_args()
+
+
+def main() -> None:
+    pass
