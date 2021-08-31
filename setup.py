@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="gh-all-issues",
-    version="0.0.1",
+    version="0.0.2",
     author="Nicholas M. Synovic",
     author_email="nicholas.synovic@gmail.com",
     description="(Proof of Concept) Using GitHub Issues REST API issues to analyze GitHub issue timeline",
@@ -22,5 +22,13 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.9",
-    install_requires=["intervaltree", "numpy", "matplotlib", "pandas", "progress", "python-dateutil", "requests"],
+    install_requires=[
+        "intervaltree",
+        "numpy",
+        "matplotlib",
+        "pandas",
+        "progress",
+        "python-dateutil",
+        "requests",
+    ],
 )
