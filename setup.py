@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="ghAllIssues",
-    version="0.0.4",
+    version="0.0.5",
     author="Nicholas M. Synovic",
     author_email="nicholas.synovic@gmail.com",
     description="(Proof of Concept) Using GitHub Issues REST API issues to analyze GitHub issue timeline",
