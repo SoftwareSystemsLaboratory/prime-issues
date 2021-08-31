@@ -1,3 +1,3 @@
-from gh_all_issues.main import main
+from main import main
 
 main()

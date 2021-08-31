@@ -11,21 +11,21 @@ from matplotlib.figure import Figure
 from progress.bar import PixelBar
 
 
-def get_argparse() -> Namespace:
-    parser: ArgumentParser = ArgumentParser(
-        prog="Graph GitHub Issues",
-        usage="This program outputs a series of graphs based on GitHub issue data.",
-    )
+# def get_argparse() -> Namespace:
+#     parser: ArgumentParser = ArgumentParser(
+#         prog="Graph GitHub Issues",
+#         usage="This program outputs a series of graphs based on GitHub issue data.",
+#     )
 
-    parser.add_argument(
-        "-i",
-        "--input",
-        help="The input JSON file that is to be used for graphing",
-        type=str,
-        required=True,
-    )
+#     parser.add_argument(
+#         "-i",
+#         "--input",
+#         help="The input JSON file that is to be used for graphing",
+#         type=str,
+#         required=True,
+#     )
 
-    return parser.parse_args()
+#     return parser.parse_args()
 
 
 def loadJSON(filename: str = "issues.json") -> list:
@@ -150,8 +150,6 @@ def fillDictBasedOnKeyValue(
 
 
 def main(jsonFile: str) -> None:
-    args = get_argparse()
-
     jsonData: list = loadJSON(filename=jsonFile)
 
     tree: IntervalTree = createIntervalTree(data=jsonData, filename=jsonFile)
@@ -180,7 +178,7 @@ def main(jsonFile: str) -> None:
     )
 
 
-if __name__ == "__main__":
-    args: Namespace = get_argparse()
+# if __name__ == "__main__":
+#     args: Namespace = get_argparse()
 
-    main(jsonFile=args.input)
+#     main(jsonFile=args.input)

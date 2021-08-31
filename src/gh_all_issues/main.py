@@ -49,4 +49,8 @@ def main() -> None:
         )
     )
 
-    graphMain(jsonFile=args.repository)
+    graphMain(jsonFile=args.save_json)
+
+
+if __name__ == "__main__":
+    main()
