@@ -29,10 +29,11 @@ setup(
         "python-dateutil",
         "requests",
     ],
-    entry_points={"console_scripts": [
-        "ssl-metrics-github-issues-collect = ssl_metrics.github_issues:main",
-        "ssl-metrics-github-issues-convert = ssl_metrics.convert_output:main"
-        "ssl-metrics-github-issues-graph = ssl_metrics.create_graph:main"
+    entry_points={
+        "console_scripts": [
+            "ssl-metrics-github-issues-collect = ssl_metrics.github_issues:main",
+            "ssl-metrics-github-issues-convert = ssl_metrics.convert_output:main",
+            "ssl-metrics-github-issues-graph = ssl_metrics.create_graph:main",
         ]
     },
 )
