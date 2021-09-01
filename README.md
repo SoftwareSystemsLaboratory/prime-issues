@@ -1,4 +1,4 @@
-# gh-all-issues
+# SSL Metrics Github Issues
 
 > (Proof of Concept) Using GitHub Issues REST API  issues to analyze GitHub issue timeline
 
@@ -14,8 +14,10 @@ The present implementation assumes a GitHub hosted project.
 
 > It is reccomended to use `Python 3.9+` to execute this program
 
+### From Source
+
 1. Install the requirements via `pip install -r requirements.txt`
-2. Execute `python gh-all-issues.py --repo <OWNER/REPO> --page-limit <all | int> --token <PERSONAL ACCESS TOKEN> --save-json <filename.json>`
+2. Execute `python3 gh-all-issues.py --repo <OWNER/REPO> --page-limit <all | int> --token <PERSONAL ACCESS TOKEN> --save-json <filename.json>`
 
 **Availible arguements**
 * `-r, --repository`: GitHub repository to be used. Format needs to be "OWNER/REPO". Default is numpy/numpy
