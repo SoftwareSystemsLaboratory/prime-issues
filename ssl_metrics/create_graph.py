@@ -10,21 +10,22 @@ from intervaltree import IntervalTree
 from matplotlib.figure import Figure
 from progress.bar import PixelBar
 
-# def get_argparse() -> Namespace:
-#     parser: ArgumentParser = ArgumentParser(
-#         prog="Graph GitHub Issues",
-#         usage="This program outputs a series of graphs based on GitHub issue data.",
-#     )
 
-#     parser.add_argument(
-#         "-i",
-#         "--input",
-#         help="The input JSON file that is to be used for graphing",
-#         type=str,
-#         required=True,
-#     )
+def get_argparse() -> Namespace:
+    parser: ArgumentParser = ArgumentParser(
+        prog="Graph GitHub Issues",
+        usage="This program outputs a series of graphs based on GitHub issue data.",
+    )
 
-#     return parser.parse_args()
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="The input JSON file that is to be used for graphing",
+        type=str,
+        required=True,
+    )
+
+    return parser.parse_args()
 
 
 def loadJSON(filename: str = "issues.json") -> list:
@@ -148,10 +149,11 @@ def fillDictBasedOnKeyValue(
     return data
 
 
-def main(jsonFile: str) -> None:
-    jsonData: list = loadJSON(filename=jsonFile)
+def main() -> None:
+    args: Namespace = get_argparse()
+    jsonData: list = loadJSON(filename=args.input)
 
-    tree: IntervalTree = createIntervalTree(data=jsonData, filename=jsonFile)
+    tree: IntervalTree = createIntervalTree(data=jsonData, filename=args.input)
 
     startDay: int = tree.begin()
     endDay: int = tree.end()
@@ -177,7 +179,5 @@ def main(jsonFile: str) -> None:
     )
 
 
-# if __name__ == "__main__":
-#     args: Namespace = get_argparse()
-
-#     main(jsonFile=args.input)
+if __name__ == "__main__":
+    main()
