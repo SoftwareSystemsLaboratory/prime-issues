@@ -10,7 +10,6 @@ from intervaltree import IntervalTree
 from matplotlib.figure import Figure
 from progress.bar import PixelBar
 
-
 # def get_argparse() -> Namespace:
 #     parser: ArgumentParser = ArgumentParser(
 #         prog="Graph GitHub Issues",

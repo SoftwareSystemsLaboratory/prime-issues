@@ -120,7 +120,7 @@ def storeJSON(json: list, filename: str = "issues.json") -> bool:
     return exists(filename)
 
 
-if __name__ == "__main__":
+def main() -> None:
     args: Namespace = get_argparse()
 
     print(
@@ -130,3 +130,7 @@ if __name__ == "__main__":
             filename=args.save_json,
         )
     )
+
+
+if __name__ == "__main__":
+    main()
