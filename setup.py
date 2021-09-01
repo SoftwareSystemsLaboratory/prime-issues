@@ -1,27 +1,23 @@
-import setuptools
+# setup.py - placeholder for eventual setup script
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+from setuptools import setup
 
-setuptools.setup(
-    name="ghAllIssues",
-    version="0.0.5",
-    author="Nicholas M. Synovic",
-    author_email="nicholas.synovic@gmail.com",
-    description="(Proof of Concept) Using GitHub Issues REST API issues to analyze GitHub issue timeline",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
+from ssl_metrics import version
+
+setup(
+    name="ssl-metrics-github-issues",
+    packages=["ssl_metrics"],
+    version=version.version(),
+    description="SSL Metrics - GitHub Issues Analysis",
+    author="Software and Systems Laboratory - Loyola University Chicago",
     url="https://ssl.cs.luc.edu/projects/metricsDashboard",
-    project_urls={
-        "Bug Tracker": "https://github.com/NicholasSynovic/mingo/issues",
-    },
+    keywords=["github", "software engineering", "metrics", "issues"],
     classifiers=[
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",
-        "Operating System :: OS Independent",
+        "License :: OSI Approved :: Apache Software License",
     ],
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.9",
+    python_requires=">=3",
     install_requires=[
         "intervaltree",
         "numpy",
@@ -31,4 +27,5 @@ setuptools.setup(
         "python-dateutil",
         "requests",
     ],
+    entry_points={"console_scripts": []},
 )
