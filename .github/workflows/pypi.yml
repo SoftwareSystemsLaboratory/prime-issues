@@ -1,7 +1,6 @@
 name: Publish to PyPi
 
-on:
-  workflow_dispatch:
+on: push
 
 jobs:
   build:
@@ -24,6 +23,7 @@ jobs:
         run: python3 -m build
         
       - name: Publish a Python distribution to PyPI
+        if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
