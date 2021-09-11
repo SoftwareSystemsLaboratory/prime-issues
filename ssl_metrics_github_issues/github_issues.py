@@ -20,7 +20,6 @@ def get_argparse() -> Namespace:
         type=str,
         required=False,
     )
-
     parser.add_argument(
         "-t",
         "--token",
@@ -28,7 +27,6 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
-
     parser.add_argument(
         "-s",
         "--save-json",
@@ -123,14 +121,11 @@ def storeJSON(json: list, filename: str = "issues.json") -> bool:
 def main() -> None:
     args: Namespace = get_argparse()
 
-    print(
-        getGHIssues(
-            repo=args.repository,
-            token=args.token,
-            filename=args.save_json,
-        )
+    getGHIssues(
+        repo=args.repository,
+        token=args.token,
+        filename=args.save_json,
     )
-
 
 if __name__ == "__main__":
     main()
