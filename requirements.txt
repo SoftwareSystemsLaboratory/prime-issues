@@ -1,6 +1,4 @@
-black
 intervaltree
-isort
 numpy
 matplotlib
 pandas
