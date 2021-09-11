@@ -16,11 +16,31 @@ def get_argparse() -> Namespace:
         prog="Graph GitHub Issues",
         usage="This program outputs a series of graphs based on GitHub issue data.",
     )
-
+    parser.add_argument(
+        "-c",
+        "--closed-issues-graph-filename",
+        help="The filename of the output graph of closed issues",
+        type=str,
+        required=True,
+    )
     parser.add_argument(
         "-i",
         "--input",
         help="The input JSON file that is to be used for graphing",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "-o",
+        "--open-issues-graph-filename",
+        help="The filename of the output graph of open issues",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "-x",
+        "--joint-graph-filename",
+        help="The filename of the joint output graph of open and closed issues",
         type=str,
         required=True,
     )
@@ -151,6 +171,11 @@ def fillDictBasedOnKeyValue(
 
 def main() -> None:
     args: Namespace = get_argparse()
+
+    if args.input[-5::] != ".json":
+        print("Invalid input file type. Input file must be JSON")
+        quit(1)
+
     jsonData: list = loadJSON(filename=args.input)
 
     tree: IntervalTree = createIntervalTree(data=jsonData, filename=args.input)
@@ -171,11 +196,14 @@ def main() -> None:
         dictionary=baseDict, tree=tree, key="state", value="closed"
     )
 
-    plot_OpenIssuesPerDay_Line(pregeneratedData=openIssues)
-    plot_ClosedIssuesPerDay_Line(pregeneratedData=closedIssues)
+    plot_OpenIssuesPerDay_Line(pregeneratedData=openIssues, filename=args.open_issues_graph_filename)
+
+    plot_ClosedIssuesPerDay_Line(pregeneratedData=closedIssues, filename=args.closed_issues_graph_filename)
+
     plot_OpenClosedIssuesPerDay_Line(
         pregeneratedData_ClosedIssues=closedIssues,
         pregeneratedData_OpenIssues=openIssues,
+        filename=args.joint_graph_filename
     )
 
 
