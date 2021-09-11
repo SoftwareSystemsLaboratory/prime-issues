@@ -1,5 +1,8 @@
 from setuptools import setup
-from sssl_metrics_github_issues import version
+from ssl_metrics_github_issues import version
+
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name="ssl-metrics-github-issues",
@@ -9,7 +12,13 @@ setup(
     author="Software and Systems Laboratory - Loyola University Chicago",
     author_email="ssl-metrics@ssl.luc.edu",
     license="Apache License 2.0",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://ssl.cs.luc.edu/projects/metricsDashboard",
+    project_urls={
+        "Bug Tracker": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/issues",
+        "GitHub Repository": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues",
+    },
     keywords=["github", "software engineering", "metrics", "issues"],
     classifiers=[
         "Development Status :: 4 - Beta",
