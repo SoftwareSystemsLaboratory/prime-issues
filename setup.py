@@ -1,6 +1,5 @@
 # setup.py - placeholder for eventual setup script
 from setuptools import setup
-
 from ssl_metrics import version
 
 setup(
