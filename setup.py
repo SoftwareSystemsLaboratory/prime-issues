@@ -1,6 +1,5 @@
-# setup.py - placeholder for eventual setup script
 from setuptools import setup
-from ssl_metrics import version
+from sssl_metrics_github_issues import version
 
 setup(
     name="ssl-metrics-github-issues",
@@ -30,7 +29,6 @@ setup(
     entry_points={
         "console_scripts": [
             "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.github_issues:main",
-            "ssl-metrics-github-issues-convert = ssl_metrics_github_issues.convert_output:main",
             "ssl-metrics-github-issues-graph = ssl_metrics_github_issues.create_graph:main",
         ]
     },
