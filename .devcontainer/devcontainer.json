@@ -1,7 +1,0 @@
-{
-    "name": "GH All Issues",
-    "extensions": [
-        "ms-python.python"
-    ],
-    "image": "python:3.9.6-buster"
-}
