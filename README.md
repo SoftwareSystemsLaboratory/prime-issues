@@ -8,13 +8,12 @@
   - [Table of Contents](#table-of-contents)
   - [About](#about)
   - [How to Run](#how-to-run)
-    - [Note](#note)
+    - [Note on Command Line Arguments](#note-on-command-line-arguments)
     - [From pip](#from-pip)
     - [Command Line Arguments](#command-line-arguments)
       - [ssl-metrics-github-issues-collect](#ssl-metrics-github-issues-collect)
       - [ssl-metrics-github-issues-graph](#ssl-metrics-github-issues-graph)
-        - [Note](#note-1)
-  - [How to Contribute](#how-to-contribute)
+        - [Note on Graph Export Options](#note-on-graph-export-options)
 
 ## About
 
@@ -28,7 +27,7 @@ Currently, this project generates graphs of:
 
 ## How to Run
 
-### Note
+### Note on Command Line Arguments
 
 See [Command Line Arguments](#command-line-arguments) for program configuration from the command line
 
@@ -51,14 +50,12 @@ See [Command Line Arguments](#command-line-arguments) for program configuration 
 
 #### ssl-metrics-github-issues-graph
 
-##### Note
+##### Note on Graph Export Options
 
-Arguements, `-c`, `-o`, and `-x` can be of any of the file types listed here.
+Arguements `-c`, `-o`, and `-x` can be of any of the formats that `matplotlibs.pyplot.savefig` function exports to.
 
 - `-h`, `--help`: Shows the help menu and exits
 - `-c`, `--closed-issues-graph-filename`: The filename of the output graph of closed issues
 - `-i`, `--input`: The input JSON file that is to be used for graphing
 - `-o`, `--open-issues-graph-filename`: The filename of the output graph of open issues
 - `-x`, `--joint-issues-graph-filename`: The filename of the output graph of open and closed issues
-
-## How to Contribute
