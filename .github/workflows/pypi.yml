@@ -1,8 +1,10 @@
 name: Publish to PyPi
 
 on: 
-  - push
-  - workflow_dispatch
+  push:
+      branches:
+        - main
+  workflow_dispatch:
 
 jobs:
   build:
