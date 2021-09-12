@@ -15,7 +15,7 @@ def get_argparse() -> Namespace:
     parser.add_argument(
         "-r",
         "--repository",
-        help='GitHub repository to be used. Format needs to be "OWNER/REPO". Default is numpy/numpy',
+        help='GitHub repository to be used. NOTE: Format needs to be "OWNER/REPO". DEFAULT: numpy/numpy',
         default="numpy/numpy",
         type=str,
         required=False,
@@ -30,7 +30,7 @@ def get_argparse() -> Namespace:
     parser.add_argument(
         "-s",
         "--save-json",
-        help="Save analysis to JSON file. EX: --save-json=issues.json",
+        help="Save analysis to JSON file",
         default="issues.json",
         type=str,
         required=True,
@@ -126,6 +126,7 @@ def main() -> None:
         token=args.token,
         filename=args.save_json,
     )
+
 
 if __name__ == "__main__":
     main()

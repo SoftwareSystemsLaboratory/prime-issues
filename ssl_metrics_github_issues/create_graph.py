@@ -196,14 +196,18 @@ def main() -> None:
         dictionary=baseDict, tree=tree, key="state", value="closed"
     )
 
-    plot_OpenIssuesPerDay_Line(pregeneratedData=openIssues, filename=args.open_issues_graph_filename)
+    plot_OpenIssuesPerDay_Line(
+        pregeneratedData=openIssues, filename=args.open_issues_graph_filename
+    )
 
-    plot_ClosedIssuesPerDay_Line(pregeneratedData=closedIssues, filename=args.closed_issues_graph_filename)
+    plot_ClosedIssuesPerDay_Line(
+        pregeneratedData=closedIssues, filename=args.closed_issues_graph_filename
+    )
 
     plot_OpenClosedIssuesPerDay_Line(
         pregeneratedData_ClosedIssues=closedIssues,
         pregeneratedData_OpenIssues=openIssues,
-        filename=args.joint_graph_filename
+        filename=args.joint_graph_filename,
     )
 
 
