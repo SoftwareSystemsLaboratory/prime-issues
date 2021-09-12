@@ -3,7 +3,7 @@
 > Using the GitHub Issues REST API, provide insight into a specific GitHub repository issue tracker
 
 [![Publish to PyPi](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml/badge.svg)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml)
-
+[![Link to PyPi](https://img.shields.io/badge/PyPi%20Link-Click%20Me!-blue)](https://pypi.org/project/ssl-metrics-github-issues/)
 ## Table of Contents
 
 - [SSL Metrics GitHub Issues](#ssl-metrics-github-issues)
