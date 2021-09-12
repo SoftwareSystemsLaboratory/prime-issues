@@ -15,12 +15,11 @@ def get_argparse() -> Namespace:
     parser.add_argument(
         "-r",
         "--repository",
-        help='GitHub repository to be used. Format needs to be "OWNER/REPO". Default is numpy/numpy',
+        help='GitHub repository to be used. NOTE: Format needs to be "OWNER/REPO". DEFAULT: numpy/numpy',
         default="numpy/numpy",
         type=str,
         required=False,
     )
-
     parser.add_argument(
         "-t",
         "--token",
@@ -28,11 +27,10 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
-
     parser.add_argument(
         "-s",
         "--save-json",
-        help="Save analysis to JSON file. EX: --save-json=issues.json",
+        help="Save analysis to JSON file",
         default="issues.json",
         type=str,
         required=True,
@@ -123,12 +121,10 @@ def storeJSON(json: list, filename: str = "issues.json") -> bool:
 def main() -> None:
     args: Namespace = get_argparse()
 
-    print(
-        getGHIssues(
-            repo=args.repository,
-            token=args.token,
-            filename=args.save_json,
-        )
+    getGHIssues(
+        repo=args.repository,
+        token=args.token,
+        filename=args.save_json,
     )
 
 

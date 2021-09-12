@@ -1,43 +1,61 @@
-# SSL Metrics Github Issues
+# SSL Metrics GitHub Issues
 
-> (Proof of Concept) Using GitHub Issues REST API  issues to analyze GitHub issue timeline
+> Using the GitHub Issues REST API, provide insight into a specific GitHub repository issue tracker
 
-## Reasoning Behind the Project
+## Table of Contents
 
-We're interested in classical metrics, which often require us to look more longtudinally at project history.
+- [SSL Metrics GitHub Issues](#ssl-metrics-github-issues)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [How to Run](#how-to-run)
+    - [Note on Command Line Arguments](#note-on-command-line-arguments)
+    - [From pip](#from-pip)
+    - [Command Line Arguments](#command-line-arguments)
+      - [ssl-metrics-github-issues-collect](#ssl-metrics-github-issues-collect)
+      - [ssl-metrics-github-issues-graph](#ssl-metrics-github-issues-graph)
+        - [Note on Graph Export Options](#note-on-graph-export-options)
 
-In this example, we're looking at issues over time, starting from the first issue of a project's history.
+## About
 
-The present implementation assumes a GitHub hosted project.
+This project is a proof of concept demonstration that **it is possible** to generate useful insights into a GitHub project via it's issue tracker.
 
-## How to Execute the Program
+Currently, this project generates graphs of:
 
-> It is reccomended to use `Python 3.9+` to execute this program
+- Number of open issues against days
+- Number of closed issues against days
+- Comparison of number of open and closed issues against days
 
-### From Source
+## How to Run
 
-1. Install the requirements via `pip install -r requirements.txt`
-2. Execute `python3 gh-all-issues.py --repo <OWNER/REPO> --page-limit <all | int> --token <PERSONAL ACCESS TOKEN> --save-json <filename.json>`
+### Note on Command Line Arguments
 
-**Availible arguements**
-* `-r, --repository`: GitHub repository to be used. Format needs to be "OWNER/REPO". Default is numpy/numpy
-* `-p, --page-limit`: The numeric limit of pages of issues to get. Default is "all"
-* `-t, --token`: GitHub personal access token
-* `-s, --save-json`: Save analysis to JSON file
+See [Command Line Arguments](#command-line-arguments) for program configuration from the command line
 
-. *(Optional Step)* To convert the data non-destructively to a `CSV` or `TSV`, run `python convertOutput --input <filename.json> --csv --tsv`
+### From pip
 
-**Availible arguements**
-* `-i, --input`: The input `json` file to be converted
-* `--csv`: Flag to output a `CSV` file with the filename. EX: `filename.csv`
-* * `--tsv`: Flag to output a `TSV` file with the filename. EX: `filename.tsv`
+1. Install `Python 3.9.6 +`
+2. (Recommended) Create a *virtual environment* with `python3.9 -m venv env` and *activate* it
+3. Run `pip install -m ssl-metrics-github-issues`
+4. Generate a JSON data set with `ssl-metrics-github-issues-collect -r REPOSITORY -t GH_TOKEN -s FILENAME.json`
+5. Generate graphs with `ssl-metrics-github-issues-graph -o OPEN_ISSUES_GRAPH_FILENAME.* -c CLOSED_ISSUES_GRAPH_FILENAME.* -x JOINT_ISSUES_GRAPH_FILENAME`
 
-## What You'll See
+### Command Line Arguments
 
-### Exported JSON file from `gh-all-issues.py`
+#### ssl-metrics-github-issues-collect
 
-* Every issue or a subset of the set of all issues and all of the JSON metadata associated with it.
+- `-h`, `--help`: Shows the help menu and exits
+- `-r`, `--repository`: GitHub repository to be used. Format needs to be "OWNER/REPO". Default is numpy/numpy
+- `-t`, `--token`: [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+- `-s`, `--save-json`: Save analysis to JSON file
 
-## TODOs
+#### ssl-metrics-github-issues-graph
 
-* Support some of the derived metrics from our Metrics Pipeline project at https://ssl.cs.luc.edu.
+##### Note on Graph Export Options
+
+Arguements `-c`, `-o`, and `-x` can be of any of the formats that `matplotlibs.pyplot.savefig` function exports to.
+
+- `-h`, `--help`: Shows the help menu and exits
+- `-c`, `--closed-issues-graph-filename`: The filename of the output graph of closed issues
+- `-i`, `--input`: The input JSON file that is to be used for graphing
+- `-o`, `--open-issues-graph-filename`: The filename of the output graph of open issues
+- `-x`, `--joint-issues-graph-filename`: The filename of the output graph of open and closed issues
