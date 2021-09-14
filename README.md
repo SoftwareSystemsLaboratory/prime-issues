@@ -39,7 +39,7 @@ See [Command Line Arguments](#command-line-arguments) for program configuration 
 2. (Recommended) Create a *virtual environment* with `python3.9 -m venv env` and *activate* it
 3. Run `pip install ssl-metrics-github-issues`
 4. Generate a JSON data set with `ssl-metrics-github-issues-collect -r REPOSITORY -t GH_TOKEN -s FILENAME.json`
-5. Generate graphs with `ssl-metrics-github-issues-graph -o OPEN_ISSUES_GRAPH_FILENAME.* -c CLOSED_ISSUES_GRAPH_FILENAME.* -x JOINT_ISSUES_GRAPH_FILENAME`
+5. Generate graphs with `ssl-metrics-github-issues-graph -i FILENAME.json -o OPEN_ISSUES_GRAPH_FILENAME.* -c CLOSED_ISSUES_GRAPH_FILENAME.* -x JOINT_ISSUES_GRAPH_FILENAME`
 
 ### Command Line Arguments
 
