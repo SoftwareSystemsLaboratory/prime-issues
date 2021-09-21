@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from json import dumps
 from os.path import exists
 
-from progress.bar import PixelBar
+from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
@@ -63,9 +63,9 @@ def getGHIssues(
         if testIfPullRequest(json[index]) is False:
             data.append(json[index])
 
-    pixelBarMax: int = requestIterations
+    barMax: int = requestIterations
 
-    with PixelBar(f"Getting issues from {repo}... ", max=pixelBarMax) as bar:
+    with Bar(f"Getting issues from {repo}... ", max=barMax) as bar:
         bar.next()
 
         if requestIterations != 1:
