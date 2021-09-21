@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
-from progress.bar import PixelBar
+from progress.bar import Bar
 
 
 def get_argparse() -> Namespace:
@@ -57,7 +57,7 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
     tree: IntervalTree = IntervalTree()
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
-    with PixelBar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
+    with Bar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
         for issue in data:
             createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
 
@@ -149,7 +149,7 @@ def fillDictBasedOnKeyValue(
     maxKeyValue: int = max(keys)
     minKeyValue: int = min(keys)
 
-    with PixelBar(
+    with Bar(
         f'Getting the total number of "{key} = {value}" issues per day... ',
         max=maxKeyValue,
     ) as pb:
