@@ -19,8 +19,7 @@ setup(
         "Bug Tracker": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/issues",
         "GitHub Repository": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues",
     },
-    keywords=["github", "software engineering", "metrics", "issues"],
-          keywords=[
+    keywords=[
         "git",
         "github",
         "software engineering",
