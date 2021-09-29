@@ -12,6 +12,8 @@ def get_argparse() -> Namespace:
         prog="GH All issues",
         usage="This program generates an interval tree from a JSON file containing a GitHub repositories issues.",
     )
+
+    parser.add_argument("-p", "--pull-requests", help="Flag to include pull requests in output json file", action="store_true", default=False, required=False,)
     parser.add_argument(
         "-r",
         "--repository",
@@ -21,13 +23,6 @@ def get_argparse() -> Namespace:
         required=False,
     )
     parser.add_argument(
-        "-t",
-        "--token",
-        help="GitHub personal access token",
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
         "-s",
         "--save-json",
         help="Save analysis to JSON file",
@@ -35,6 +30,14 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
+    parser.add_argument(
+        "-t",
+        "--token",
+        help="GitHub personal access token",
+        type=str,
+        required=True,
+    )
+
     return parser.parse_args()
 
 
@@ -42,6 +45,7 @@ def getGHIssues(
     repo: str,
     token: str,
     filename: str,
+    pullRequests: bool = False
 ) -> int:
 
     data: list = []
@@ -65,7 +69,7 @@ def getGHIssues(
 
     barMax: int = requestIterations
 
-    with Bar(f"Getting issues from {repo}... ", max=barMax) as bar:
+    with Bar(f"Removing pull requests from {repo}... ", max=barMax) as bar:
         bar.next()
 
         if requestIterations != 1:
@@ -77,7 +81,10 @@ def getGHIssues(
 
                     json: dict = html.json()
                     for index in range(len(json)):
-                        if testIfPullRequest(json[index]) is False:
+                        if pullRequests is False:
+                            if testIfPullRequest(json[index]) is False:
+                                data.append(json[index])
+                        else:
                             data.append(json[index])
 
                     bar.next()
@@ -125,6 +132,7 @@ def main() -> None:
         repo=args.repository,
         token=args.token,
         filename=args.save_json,
+        pullRequests=args.pull_requests
     )
 
 
