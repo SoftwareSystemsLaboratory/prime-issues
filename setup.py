@@ -20,10 +20,16 @@ setup(
         "GitHub Repository": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues",
     },
     keywords=["github", "software engineering", "metrics", "issues"],
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Programming Language :: Python :: 3.0",
-        "License :: OSI Approved :: Apache Software License",
+          keywords=[
+        "git",
+        "github",
+        "software engineering",
+        "metrics",
+        "software systems laboratory",
+        "ssl",
+        "loyola",
+        "loyola university chicago",
+        "luc",
     ],
     python_requires=">=3.9",
     install_requires=[
