@@ -1,4 +1,5 @@
 from setuptools import setup
+
 from ssl_metrics_github_issues import version
 
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -32,13 +33,13 @@ setup(
     ],
     python_requires=">=3.9",
     install_requires=[
-        "intervaltree",
-        "numpy",
-        "matplotlib",
-        "pandas",
-        "progress",
-        "python-dateutil",
-        "requests",
+        "intervaltree>=3.1.0",
+        "numpy>1.21.2",
+        "matplotlib>=3.4.3",
+        "pandas>=1.3.3",
+        "progress>=1.6",
+        "python-dateutil>=2.8.2",
+        "requests>=2.26.0",
     ],
     entry_points={
         "console_scripts": [
