@@ -3,6 +3,7 @@ from json import dumps
 from os import sep
 from os.path import exists
 
+from libs.common import getLastPage, storeJSON
 from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
@@ -14,6 +15,14 @@ def get_argparse() -> Namespace:
         usage="This program downloads all issue related data from a GitHub repository",
     )
     parser.add_argument(
+        "-c",
+        "--comments-output",
+        help="JSON file to store issue comments",
+        type=str,
+        default="comments.json",
+        required=False,
+    )
+    parser.add_argument(
         "--comments",
         help="Download the comments of all GitHub issues",
         action="store_true",
@@ -21,12 +30,12 @@ def get_argparse() -> Namespace:
         required=False,
     )
     parser.add_argument(
-        "-s",
-        "--save-json",
-        help="Save analysis to JSON file",
-        default="issues.json",
+        "-to",
+        "--timeline-output",
+        help="JSON file to store issue timelines",
         type=str,
-        required=True,
+        default="timelines.json",
+        required=False,
     )
     parser.add_argument(
         "--timeline",
@@ -97,29 +106,6 @@ def getGHRESTAPIFromKey(
                             out.append(json[index])
                         bar.next()
     return out
-
-
-def getLastPage(response: Response) -> int:
-    responseHeaders: CaseInsensitiveDict = response.headers
-    try:
-        links: str = responseHeaders["Link"]
-    except KeyError:
-        return 1
-
-    linksSplit: list = links.split(",")
-    lastLink: str = linksSplit[1]
-
-    lastPageIndex: int = lastLink.find("&page=") + 6
-    lastPageRightCaretIndex: int = lastLink.find(">;")
-
-    return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
-
-
-def storeJSON(json: list, filename: str = "issues.json") -> bool:
-    data: str = dumps(json)
-    with open(file=filename, mode="w") as jsonFile:
-        jsonFile.write(data)
-    return exists(filename)
 
 
 def main():
