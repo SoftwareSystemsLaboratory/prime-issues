@@ -17,7 +17,7 @@ def get_argparse() -> Namespace:
         help="Download the comments of all GitHub issues",
         action="store_true",
         default=False,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-p",
@@ -48,7 +48,7 @@ def get_argparse() -> Namespace:
         help="Download the timelines of all GitHub issues",
         action="store_true",
         default=False,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-t",
