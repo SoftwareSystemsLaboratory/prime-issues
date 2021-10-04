@@ -114,52 +114,55 @@ def getGHIssues(
     return data
 
 
-def getGHIssueComments(
+def getGHRESTAPIFromKey(
+    key: str,
     data: list,
     repo: str,
     token: str,
 ) -> list:
 
-    # data: list = []
+    out: list = []
     requestHeaders: dict = {
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "gh-all-issues",
         "Authorization": f"token {token}",
     }
 
-    urls: data = [
-        x["comments_url"] + "?&sort=created&direction=asc&per_page=100" for x in data
-    ]
+    urls: data = [x[key] + "?&sort=created&direction=asc&per_page=100" for x in data]
 
     url: str
     for url in urls:
         issueNumber: int = url.split(sep="/")[7]
-        print(f"Getting {repo}'s {issueNumber} issue first page of comments response to determine iteration amount... '")
+        print(
+            f"Getting {repo}'s {issueNumber} issue first page of comments response to determine iteration amount... '"
+        )
 
         html: Response = get(url=url, headers=requestHeaders)
 
         requestIterations: int = getLastPage(response=html)
 
-    json: dict = html.json()
-    for index in range(len(json)):
-        data.append(json[index])
+        json: dict = html.json()
+        for index in range(len(json)):
+            out.append(json[index])
 
-    barMax: int = requestIterations
-    with Bar(f"Downloading remaining comments for issue {issueNumber} in {repo}", max=barMax) as bar:
-        bar.next()
+        barMax: int = requestIterations
+        with Bar(
+            f"Downloading remaining comments for issue {issueNumber} in {repo}", max=barMax
+        ) as bar:
+            bar.next()
 
-        if requestIterations != 1:
-            for iteration in range(requestIterations + 1):
+            if requestIterations != 1:
+                for iteration in range(requestIterations + 1):
 
-                if iteration > 1:
-                    apiCall: str = url + f"&page={iteration}"
-                    html: Response = get(url=apiCall, headers=requestHeaders)
+                    if iteration > 1:
+                        apiCall: str = url + f"&page={iteration}"
+                        html: Response = get(url=apiCall, headers=requestHeaders)
 
-                    json: dict = html.json()
-                    for index in range(len(json)):
-                        data.append(json[index])
-                    bar.next()
-    return data
+                        json: dict = html.json()
+                        for index in range(len(json)):
+                            out.append(json[index])
+                        bar.next()
+    return out
 
 
 def getLastPage(response: Response) -> int:
@@ -207,8 +210,28 @@ def main() -> None:
     )
 
     if args.comments:
-        comments: list = getGHIssueComments(data=issues, repo=args.repository, token=args.token,)
-        storeJSON(json=comments, filename="comments.json",)
+        comments: list = getGHRESTAPIFromKey(
+            key="comments_url",
+            data=issues,
+            repo=args.repository,
+            token=args.token,
+        )
+        storeJSON(
+            json=comments,
+            filename="comments.json",
+        )
+
+    if args.timeline:
+        timeline: list = getGHRESTAPIFromKey(
+            key="timeline_url",
+            data=issues,
+            repo=args.repository,
+            token=args.token,
+        )
+        storeJSON(
+            json=timeline,
+            filename="timeline.json",
+        )
 
 
 if __name__ == "__main__":
