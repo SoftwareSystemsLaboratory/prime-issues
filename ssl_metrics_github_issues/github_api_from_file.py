@@ -60,9 +60,8 @@ def get_argparse() -> Namespace:
 
 
 def getGHRESTAPIFromKey(
-    key: str,
     data: list,
-    repo: str,
+    key: str,
     token: str,
 ) -> list:
 
@@ -77,6 +76,7 @@ def getGHRESTAPIFromKey(
 
     url: str
     for url in urls:
+        repo: str = url.split(sep="/")[5]
         issueNumber: str = url.split(sep="/")[7]
 
         html: Response = get(url=url, headers=requestHeaders)
@@ -121,24 +121,22 @@ def main():
         comments: list = getGHRESTAPIFromKey(
             key="comments_url",
             data=issues,
-            repo=args.repository,
             token=args.token,
         )
         storeJSON(
             json=comments,
-            filename="comments.json",
+            filename=args.comments_output,
         )
 
     if args.timeline:
         timeline: list = getGHRESTAPIFromKey(
             key="timeline_url",
             data=issues,
-            repo=args.repository,
             token=args.token,
         )
         storeJSON(
             json=timeline,
-            filename="timeline.json",
+            filename=args.timeline_output,
         )
 
 
