@@ -1,4 +1,5 @@
-from json import dumps
+from json import dumps, load
+import json
 from os import sep
 from os.path import exists
 
@@ -22,8 +23,16 @@ def getLastPage(response: Response) -> int:
     return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
+def readJSON(filename: str = "issues.json") ->  list:
+    data: list = []
+    with open(file=filename, mode="r") as jsonFile:
+        data = load(jsonFile)
+        jsonFile.close()
+    return exists(filename)
+
 def storeJSON(json: list, filename: str = "issues.json") -> bool:
     data: str = dumps(json)
     with open(file=filename, mode="w") as jsonFile:
         jsonFile.write(data)
+        jsonFile.close()
     return exists(filename)

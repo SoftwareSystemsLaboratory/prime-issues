@@ -118,6 +118,7 @@ def main() -> None:
         token=args.token,
         pullRequests=args.pull_requests,
     )
+
     storeJSON(
         json=issues,
         filename=args.save_json,

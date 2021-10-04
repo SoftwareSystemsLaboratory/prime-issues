@@ -3,7 +3,7 @@ from json import dumps
 from os import sep
 from os.path import exists
 
-from libs.common import getLastPage, storeJSON
+from libs.common import getLastPage, readJSON, storeJSON
 from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
@@ -28,6 +28,13 @@ def get_argparse() -> Namespace:
         action="store_true",
         default=False,
         required=False,
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="JSON file to load issue to collect extra information",
+        type=str,
+        required=True,
     )
     parser.add_argument(
         "-to",
@@ -110,6 +117,8 @@ def getGHRESTAPIFromKey(
 
 def main():
     args: Namespace = get_argparse()
+
+    issues: list = readJSON(filename=args.input)
 
     if args.comments:
         comments: list = getGHRESTAPIFromKey(
