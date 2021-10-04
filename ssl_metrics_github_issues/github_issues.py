@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from json import dumps
+from os import sep
 from os.path import exists
 
 from progress.bar import Bar
@@ -61,24 +62,10 @@ def get_argparse() -> Namespace:
     return parser.parse_args()
 
 
-def getLastPage(response: Response) -> int:
-    responseHeaders: CaseInsensitiveDict = response.headers
-    try:
-        links: str = responseHeaders["Link"]
-    except KeyError:
-        return 1
-
-    linksSplit: list = links.split(",")
-    lastLink: str = linksSplit[1]
-
-    lastPageIndex: int = lastLink.find("&page=") + 6
-    lastPageRightCaretIndex: int = lastLink.find(">;")
-
-    return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
-
-
 def getGHIssues(
-    repo: str, token: str, filename: str, pullRequests: bool = False
+    repo: str,
+    token: str,
+    pullRequests: bool = False,
 ) -> int:
 
     data: list = []
@@ -124,10 +111,71 @@ def getGHIssues(
                             data.append(json[index])
 
                     bar.next()
+    return data
 
-    if storeJSON(json=data, filename=filename):
-        return len(data)
-    return 1
+
+def getGHIssueComments(
+    data: list,
+    repo: str,
+    token: str,
+) -> list:
+
+    # data: list = []
+    requestHeaders: dict = {
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "gh-all-issues",
+        "Authorization": f"token {token}",
+    }
+
+    urls: data = [
+        x["comments_url"] + "?&sort=created&direction=asc&per_page=100" for x in data
+    ]
+
+    url: str
+    for url in urls:
+        issueNumber: int = url.split(sep="/")[7]
+        print(f"Getting {repo}'s {issueNumber} issue first page of comments response to determine iteration amount... '")
+
+        html: Response = get(url=url, headers=requestHeaders)
+
+        requestIterations: int = getLastPage(response=html)
+
+    json: dict = html.json()
+    for index in range(len(json)):
+        data.append(json[index])
+
+    barMax: int = requestIterations
+    with Bar(f"Downloading remaining comments for issue {issueNumber} in {repo}", max=barMax) as bar:
+        bar.next()
+
+        if requestIterations != 1:
+            for iteration in range(requestIterations + 1):
+
+                if iteration > 1:
+                    apiCall: str = url + f"&page={iteration}"
+                    html: Response = get(url=apiCall, headers=requestHeaders)
+
+                    json: dict = html.json()
+                    for index in range(len(json)):
+                        data.append(json[index])
+                    bar.next()
+    return data
+
+
+def getLastPage(response: Response) -> int:
+    responseHeaders: CaseInsensitiveDict = response.headers
+    try:
+        links: str = responseHeaders["Link"]
+    except KeyError:
+        return 1
+
+    linksSplit: list = links.split(",")
+    lastLink: str = linksSplit[1]
+
+    lastPageIndex: int = lastLink.find("&page=") + 6
+    lastPageRightCaretIndex: int = lastLink.find(">;")
+
+    return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
 def storeJSON(json: list, filename: str = "issues.json") -> bool:
@@ -148,12 +196,19 @@ def testIfPullRequest(dictionary: dict) -> bool:
 def main() -> None:
     args: Namespace = get_argparse()
 
-    getGHIssues(
+    issues: list = getGHIssues(
         repo=args.repository,
         token=args.token,
-        filename=args.save_json,
         pullRequests=args.pull_requests,
     )
+    storeJSON(
+        json=issues,
+        filename=args.save_json,
+    )
+
+    if args.comments:
+        comments: list = getGHIssueComments(data=issues, repo=args.repository, token=args.token,)
+        storeJSON(json=comments, filename="comments.json",)
 
 
 if __name__ == "__main__":
