@@ -2,6 +2,8 @@
 
 > Using the GitHub Issues REST API, provide insight into a specific GitHub repository issue tracker
 
+[![Publish to PyPi](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml/badge.svg)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml)
+
 ## Table of Contents
 
 - [SSL Metrics GitHub Issues](#ssl-metrics-github-issues)
@@ -35,7 +37,7 @@ See [Command Line Arguments](#command-line-arguments) for program configuration 
 
 1. Install `Python 3.9.6 +`
 2. (Recommended) Create a *virtual environment* with `python3.9 -m venv env` and *activate* it
-3. Run `pip install -m ssl-metrics-github-issues`
+3. Run `pip install ssl-metrics-github-issues`
 4. Generate a JSON data set with `ssl-metrics-github-issues-collect -r REPOSITORY -t GH_TOKEN -s FILENAME.json`
 5. Generate graphs with `ssl-metrics-github-issues-graph -i FILENAME.json -o OPEN_ISSUES_GRAPH_FILENAME.* -c CLOSED_ISSUES_GRAPH_FILENAME.* -x JOINT_ISSUES_GRAPH_FILENAME`
 
