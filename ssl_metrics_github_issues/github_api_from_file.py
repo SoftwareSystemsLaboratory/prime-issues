@@ -1,7 +1,4 @@
 from argparse import ArgumentParser, Namespace
-from json import dumps
-from os import sep
-from os.path import exists
 
 from libs.common import getLastPage, readJSON, storeJSON
 from progress.bar import Bar
