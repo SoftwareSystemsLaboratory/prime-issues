@@ -10,10 +10,23 @@ from requests.models import CaseInsensitiveDict
 def get_argparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="GH All issues",
-        usage="This program generates an interval tree from a JSON file containing a GitHub repositories issues.",
+        usage="This program downloads all issue related data from a GitHub repository",
     )
-
-    parser.add_argument("-p", "--pull-requests", help="Flag to include pull requests in output json file", action="store_true", default=False, required=False,)
+    parser.add_argument(
+        "--comments",
+        help="Download the comments of all GitHub issues",
+        action="store_true",
+        default=False,
+        required=True,
+    )
+    parser.add_argument(
+        "-p",
+        "--pull-requests",
+        help="Flag to include pull requests in output json file",
+        action="store_true",
+        default=False,
+        required=False,
+    )
     parser.add_argument(
         "-r",
         "--repository",
@@ -28,6 +41,13 @@ def get_argparse() -> Namespace:
         help="Save analysis to JSON file",
         default="issues.json",
         type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "--timeline",
+        help="Download the timelines of all GitHub issues",
+        action="store_true",
+        default=False,
         required=True,
     )
     parser.add_argument(
@@ -67,9 +87,12 @@ def getGHIssues(
         if testIfPullRequest(json[index]) is False:
             data.append(json[index])
 
+    if pullRequests is False:
+        barStr: str = f"Removing pull requests from {repo}... "
+    else:
+        barStr: str = f"Storing JSON issue data from {repo}... "
     barMax: int = requestIterations
-
-    with Bar(f"Removing pull requests from {repo}... ", max=barMax) as bar:
+    with Bar(barStr, max=barMax) as bar:
         bar.next()
 
         if requestIterations != 1:
