@@ -81,6 +81,19 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
     return tree
 
 
+def issue_spoilage_data(
+        data: IntervalTree, filename: str = "issue_spoilage.json"
+):
+    startDay: int = data.begin()
+    endDay: int = data.end()
+    list_of_spoilage_values = []
+    for i in range(endDay - 1):
+        list_of_spoilage_values.append({"day": i, "number_open": len(data.overlap(i-1, i))})
+        print(data.overlap(i-1, i))
+        print("\n")
+    quit()
+    return list_of_spoilage_values
+
 def plot_OpenIssuesPerDay_Line(
     pregeneratedData: dict = None,
     filename: str = "open_issues_per_day_line.png",
@@ -209,7 +222,9 @@ def main() -> None:
         pregeneratedData_OpenIssues=openIssues,
         filename=args.joint_graph_filename,
     )
-
+    new_list = issue_spoilage_data(data=tree)
+    print(new_list)
+    # print(type(new_list))
 
 if __name__ == "__main__":
     main()
