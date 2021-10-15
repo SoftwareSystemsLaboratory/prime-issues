@@ -105,7 +105,7 @@ def issue_spoilage_data(
                 #     proc_overlap.append(issue)
                 if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
                     proc_overlap.append(issue)
-            list_of_spoilage_values.append({"day": i, "number_open": len(proc_overlap)})
+            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap)})
         else:
             temp_set = data.overlap(i-1, i)
             proc_overlap = []
@@ -114,7 +114,7 @@ def issue_spoilage_data(
                 #     proc_overlap.append(issue)
                 if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
                     proc_overlap.append(issue)
-            list_of_spoilage_values.append({"day": i, "number_open": len(proc_overlap)})
+            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap)})
     return list_of_spoilage_values
 
 def plot_IssueSpoilagePerDay(
@@ -272,6 +272,8 @@ def main() -> None:
     new_list: list = issue_spoilage_data(
         data=tree,
     )
+
+    print(new_list)
 
     plot_IssueSpoilagePerDay(
         pregeneratedData=new_list,
