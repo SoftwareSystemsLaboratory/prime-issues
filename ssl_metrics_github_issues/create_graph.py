@@ -30,6 +30,16 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
+
+
+    parser.add_argument(
+        "-l",
+        "--line-of-issues-spoilage-filename",
+        help="The filename of the output graph of spoiled issues",
+        type=str,
+        required=True,
+    )
+
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
@@ -82,17 +92,53 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
 
 
 def issue_spoilage_data(
-        data: IntervalTree, filename: str = "issue_spoilage.json"
+        data: IntervalTree,
 ):
-    startDay: int = data.begin()
     endDay: int = data.end()
     list_of_spoilage_values = []
-    for i in range(endDay - 1):
-        list_of_spoilage_values.append({"day": i, "number_open": len(data.overlap(i-1, i))})
-        print(data.overlap(i-1, i))
-        print("\n")
-    quit()
+    for i in range(endDay):
+        if i == 1:
+            temp_set = data.overlap(0, 1)
+            proc_overlap = []
+            for issue in temp_set:
+                # if issue.data["state"] == "open":
+                #     proc_overlap.append(issue)
+                if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
+                    proc_overlap.append(issue)
+            list_of_spoilage_values.append({"day": i, "number_open": len(proc_overlap)})
+        else:
+            temp_set = data.overlap(i-1, i)
+            proc_overlap = []
+            for issue in temp_set:
+                # if issue.data["state"] == "open":
+                #     proc_overlap.append(issue)
+                if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
+                    proc_overlap.append(issue)
+            list_of_spoilage_values.append({"day": i, "number_open": len(proc_overlap)})
     return list_of_spoilage_values
+
+def plot_IssueSpoilagePerDay(
+  pregeneratedData: list = None,
+  filename: str = "line-of-issues-spoilage_per_day.png",
+):
+    figure: Figure = plt.figure()
+
+    plt.title("Number of Spoiled Issues Per Day")
+    plt.ylabel("Number of Issues")
+    plt.xlabel("Day")
+
+    data: list = pregeneratedData
+
+    keys = list()
+    values = list()
+    for day in pregeneratedData:
+        keys.append(day["day"])
+        values.append(day["number_open"])
+
+    plt.plot(keys, values)
+    figure.savefig(filename)
+
+    return exists(filename)
 
 def plot_OpenIssuesPerDay_Line(
     pregeneratedData: dict = None,
@@ -222,9 +268,15 @@ def main() -> None:
         pregeneratedData_OpenIssues=openIssues,
         filename=args.joint_graph_filename,
     )
-    new_list = issue_spoilage_data(data=tree)
-    print(new_list)
-    # print(type(new_list))
+
+    new_list: list = issue_spoilage_data(
+        data=tree,
+    )
+
+    plot_IssueSpoilagePerDay(
+        pregeneratedData=new_list,
+        filename=args.line_of_issues_spoilage_filename,
+    )
 
 if __name__ == "__main__":
     main()

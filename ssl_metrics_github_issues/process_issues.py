@@ -20,6 +20,14 @@ def get_argparse() -> Namespace:
         "ssl-metrics-github-issues tool.",
         default="issues.json",
         type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "-w",
+        "--window",
+        help="This can be used to choose a specific number of days of issues you would like to look into",
+        default=0,
+        type=int,
         required=False,
     )
     parser.add_argument(
@@ -35,6 +43,7 @@ def get_argparse() -> Namespace:
 
 def getIssueEngagementReport(
     input_json: str,
+    window: int,
 ) -> list:
 
     with open(input_json, "r") as json_file:
@@ -57,7 +66,7 @@ def getIssueEngagementReport(
     for issue in data:
         createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
         today: datetime = datetime.now(tz=None)
-        if (today - createdDate).days > 40: # TODO: Make this into a command line arg for a window of time
+        if (today - createdDate).days > window: # TODO: Make this into a command line arg for a window of time
             removal_List.append(issue)
 
     for issue in removal_List:
@@ -82,6 +91,7 @@ def main() -> None:
 
     issues_json = getIssueEngagementReport(
         input_json=args.input,
+        window=args.window,
     )
 
     storeJSON(
