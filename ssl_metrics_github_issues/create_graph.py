@@ -94,8 +94,10 @@ def createIntervalTree(data: list, filename: str = "issues.json") -> IntervalTre
 def issue_spoilage_data(
         data: IntervalTree,
 ):
+    startDay: int = data.begin()
     endDay: int = data.end()
     list_of_spoilage_values = []
+    list_of_intervals = []
     for i in range(endDay):
         if i == 1:
             temp_set = data.overlap(0, 1)
@@ -105,7 +107,8 @@ def issue_spoilage_data(
                 #     proc_overlap.append(issue)
                 if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
                     proc_overlap.append(issue)
-            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap)})
+                    # list_of_intervals.append(issue.end - startDay)
+            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap), "intervals": list_of_intervals})
         else:
             temp_set = data.overlap(i-1, i)
             proc_overlap = []
@@ -114,7 +117,8 @@ def issue_spoilage_data(
                 #     proc_overlap.append(issue)
                 if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
                     proc_overlap.append(issue)
-            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap)})
+                    # list_of_intervals.append(issue.end - startDay)
+            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap), "intervals": list_of_intervals})
     return list_of_spoilage_values
 
 def plot_IssueSpoilagePerDay(

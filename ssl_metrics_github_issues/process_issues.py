@@ -24,12 +24,20 @@ def get_argparse() -> Namespace:
     )
     parser.add_argument(
         "-w",
-        "--window",
+        "--high_window",
         help="This can be used to choose a specific number of days of issues you would like to look into",
-        default=0,
         type=int,
         required=False,
     )
+
+    parser.add_argument(
+        "-l",
+        "--low_window",
+        help="This can be used to choose a specific number of days of issues you would like to look into",
+        type=int,
+        required=False,
+    )
+
     parser.add_argument(
         "-s",
         "--save-json",
@@ -43,7 +51,8 @@ def get_argparse() -> Namespace:
 
 def getIssueEngagementReport(
     input_json: str,
-    window: int,
+    low_window: int,
+    high_window: int,
 ) -> list:
 
     with open(input_json, "r") as json_file:
@@ -66,7 +75,7 @@ def getIssueEngagementReport(
     for issue in data:
         createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
         today: datetime = datetime.now(tz=None)
-        if (today - createdDate).days > window: # TODO: Make this into a command line arg for a window of time
+        if low_window < (today - createdDate).days > high_window: # TODO: Make this into a command line arg for a window of time
             removal_List.append(issue)
 
     for issue in removal_List:
@@ -91,7 +100,8 @@ def main() -> None:
 
     issues_json = getIssueEngagementReport(
         input_json=args.input,
-        window=args.window,
+        low_window=args.low_window,
+        high_window=args.high_window,
     )
 
     storeJSON(
