@@ -26,17 +26,15 @@ def get_argparse() -> Namespace:
         "-u",
         "--upper-window-bound",
         help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
-        default=-1,
         type=int,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-l",
         "--lower-window-bound",
         help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
-        default=0,
         type=int,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-s",
