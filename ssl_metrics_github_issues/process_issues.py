@@ -23,21 +23,21 @@ def get_argparse() -> Namespace:
         required=True,
     )
     parser.add_argument(
-        "-w",
-        "--high_window",
-        help="This can be used to choose a specific number of days of issues you would like to look into",
+        "-u",
+        "--upper-window-bound",
+        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
+        default=-1,
         type=int,
         required=False,
     )
-
     parser.add_argument(
         "-l",
-        "--low_window",
-        help="This can be used to choose a specific number of days of issues you would like to look into",
+        "--lower-window-bound",
+        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
+        default=0,
         type=int,
         required=False,
     )
-
     parser.add_argument(
         "-s",
         "--save-json",
@@ -54,6 +54,10 @@ def getIssueEngagementReport(
     low_window: int,
     high_window: int,
 ) -> list:
+    today: datetime = datetime.now(tz=None)
+
+    if high_window is None:
+        high_window = today.day
 
     with open(input_json, "r") as json_file:
         # with open("issues.json") as json_file:
@@ -74,8 +78,7 @@ def getIssueEngagementReport(
 
     for issue in data:
         createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-        today: datetime = datetime.now(tz=None)
-        if low_window < (today - createdDate).days > high_window: # TODO: Make this into a command line arg for a window of time
+        if (today - createdDate).days < low_window or (today - createdDate).days > high_window:
             removal_List.append(issue)
 
     for issue in removal_List:
@@ -98,10 +101,15 @@ def storeJSON(
 def main() -> None:
     args: Namespace = get_argparse()
 
+    if args.upper_window_bound <= -1:
+        upperWindow: None = None
+    else:
+        upperWindow: int = args.upper_window_bound
+
     issues_json = getIssueEngagementReport(
         input_json=args.input,
-        low_window=args.low_window,
-        high_window=args.high_window,
+        low_window=args.lower_window_bound,
+        high_window=upperWindow,
     )
 
     storeJSON(
