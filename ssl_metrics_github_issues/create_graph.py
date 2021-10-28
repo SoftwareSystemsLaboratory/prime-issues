@@ -68,16 +68,10 @@ def createIntervalTree(data: list, filename: str) -> IntervalTree:
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
     with Bar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
+        issue: dict
         for issue in data:
-            createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-
-            if issue["state"] == "closed":
-                closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-            else:
-                closedDate: datetime = datetime.now(tz=None)
-
-            begin: int = (createdDate - day0).days
-            end: int = (closedDate - day0).days
+            begin: int = issue["created_at_day"]
+            end: int = issue["closed_at_day"]
 
             try:
                 issue["endDayOffset"] = 0
