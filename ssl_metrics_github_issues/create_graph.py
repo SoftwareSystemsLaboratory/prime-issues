@@ -2,7 +2,6 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import load
 from os.path import exists
-from typing import Any, KeysView
 
 import matplotlib.pyplot as plt
 from dateutil.parser import parse
@@ -11,7 +10,7 @@ from matplotlib.figure import Figure
 from progress.bar import Bar
 
 
-def get_argparse() -> Namespace:
+def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="Graph GitHub Issues",
         usage="This program outputs a series of graphs based on GitHub issue data.",
@@ -30,16 +29,13 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
-
-
-    parser.add_argument(
-        "-l",
-        "--line-of-issues-spoilage-filename",
-        help="The filename of the output graph of spoiled issues",
-        type=str,
-        required=True,
-    )
-
+    # parser.add_argument(
+    #     "-l",
+    #     "--line-of-issues-spoilage-filename",
+    #     help="The filename of the output graph of spoiled issues",
+    #     type=str,
+    #     required=True,
+    # )
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
@@ -54,30 +50,27 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
-
     return parser.parse_args()
 
 
-def loadJSON(filename: str = "issues.json") -> list:
-    with open(file=filename, mode="r") as jsonFile:
-        return load(jsonFile)
+def loadJSON(filename: str) -> list:
+    try:
+        with open(file=filename, mode="r") as jsonFile:
+            return load(jsonFile)
+    except FileExistsError:
+        print(f"{filename} does not exist.")
+        quit(1)
 
 
-def createIntervalTree(data: list, filename: str = "issues_to_graph1.json") -> IntervalTree:
+def createIntervalTree(data: list, filename: str) -> IntervalTree:
     tree: IntervalTree = IntervalTree()
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
     with Bar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
+        issue: dict
         for issue in data:
-            createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-
-            if issue["state"] == "closed":
-                closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-            else:
-                closedDate: datetime = datetime.now(tz=None)
-
-            begin: int = (createdDate - day0).days
-            end: int = (closedDate - day0).days
+            begin: int = issue["created_at_day"]
+            end: int = issue["closed_at_day"]
 
             try:
                 issue["endDayOffset"] = 0
@@ -92,7 +85,7 @@ def createIntervalTree(data: list, filename: str = "issues_to_graph1.json") -> I
 
 
 def issue_spoilage_data(
-        data: IntervalTree,
+    data: IntervalTree,
 ):
     startDay: int = data.begin()
     endDay: int = data.end()
@@ -108,9 +101,15 @@ def issue_spoilage_data(
                 if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
                     proc_overlap.append(issue)
                     # list_of_intervals.append(issue.end - startDay)
-            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap), "intervals": list_of_intervals})
+            list_of_spoilage_values.append(
+                {
+                    "day": i + 1,
+                    "number_open": len(proc_overlap),
+                    "intervals": list_of_intervals,
+                }
+            )
         else:
-            temp_set = data.overlap(i-1, i)
+            temp_set = data.overlap(i - 1, i)
             proc_overlap = []
             for issue in temp_set:
                 # if issue.data["state"] == "open":
@@ -118,12 +117,19 @@ def issue_spoilage_data(
                 if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
                     proc_overlap.append(issue)
                     # list_of_intervals.append(issue.end - startDay)
-            list_of_spoilage_values.append({"day": i+1, "number_open": len(proc_overlap), "intervals": list_of_intervals})
+            list_of_spoilage_values.append(
+                {
+                    "day": i + 1,
+                    "number_open": len(proc_overlap),
+                    "intervals": list_of_intervals,
+                }
+            )
     return list_of_spoilage_values
 
+
 def plot_IssueSpoilagePerDay(
-  pregeneratedData: list = None,
-  filename: str = "line-of-issues-spoilage_per_day.png",
+    pregeneratedData: list,
+    filename: str,
 ):
     figure: Figure = plt.figure()
 
@@ -143,6 +149,7 @@ def plot_IssueSpoilagePerDay(
     figure.savefig(filename)
 
     return exists(filename)
+
 
 def plot_OpenIssuesPerDay_Line(
     pregeneratedData: dict = None,
@@ -175,7 +182,7 @@ def plot_ClosedIssuesPerDay_Line(
     data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
-    figure.savefig(filename)
+    figure.savefig(filename
 
     return exists(filename)
 
@@ -242,7 +249,7 @@ def fillDictBasedOnKeyValue(
 
 
 def main() -> None:
-    args: Namespace = get_argparse()
+    args: Namespace = getArgparse()
 
     if args.input[-5::] != ".json":
         print("Invalid input file type. Input file must be JSON")
@@ -287,11 +294,11 @@ def main() -> None:
         filename=args.joint_graph_filename,
     )
 
-
     plot_IssueSpoilagePerDay(
         pregeneratedData=new_list,
         filename=args.line_of_issues_spoilage_filename,
     )
+
 
 if __name__ == "__main__":
     main()
