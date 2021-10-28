@@ -108,7 +108,9 @@ def extractJSON(inputJSON: str) -> dict:
         if value["state"] == "open":
             value["closed_at_day"] = (dateN - date0).days
         else:
-            value["closed_at_day"] =(parse(issue["closed_at"]).replace(tzinfo=None) - date0).days
+            value["closed_at_day"] = (
+                parse(issue["closed_at"]).replace(tzinfo=None) - date0
+            ).days
 
         data.append(value)
 
