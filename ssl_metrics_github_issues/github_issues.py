@@ -2,7 +2,6 @@ from argparse import ArgumentParser, Namespace
 
 from progress.bar import Bar
 from requests import Response, get
-from requests.models import CaseInsensitiveDict
 
 from libs.common import getLastPage, storeJSON
 
