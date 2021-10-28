@@ -6,7 +6,7 @@ from os.path import exists
 from dateutil.parser import parse
 
 
-def get_argparse() -> Namespace:
+def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="GH Issue Engagement",
         usage="This program generates JSON file containing specific data related to a repositories issue engagement.",
@@ -46,66 +46,51 @@ def get_argparse() -> Namespace:
     return parser.parse_args()
 
 
-def getIssueEngagementReport(
-    input_json: str,
-    low_window: int = None,
-    high_window: int = None,
+def calculateIssueSpoilage(
+    data: list,
+    lowWindow: int,
+    highWindow: int,
 ) -> list:
-
-    with open(input_json, "r") as json_file:
-        # with open("issues.json") as json_file:
-        data = json.load(json_file)
-        data = [
-            dict(
-                issue_number=k1["number"],
-                comments=k1["comments"],
-                created_at=k1["created_at"],
-                closed_at=k1["closed_at"],
-                state=k1["state"],
-            )
-            for k1 in data
-        ]
-        json_file.close()
 
     removal_List = []
 
     begin: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
-    if high_window is None and low_window is not None:
+    if highWindow is None and lowWindow is not None:
 
         for issue in data:
             createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-            if low_window > (createdDate - begin).days:
+            if lowWindow > (createdDate - begin).days:
                 removal_List.append(issue)
 
         for issue in removal_List:
             data.remove(issue)
 
-    elif low_window is None and high_window is not None:
+    elif lowWindow is None and highWindow is not None:
 
         for issue in data:
             if issue["closed_at"] is not None:
                 closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-                if high_window < (closedDate - begin).days:
+                if highWindow < (closedDate - begin).days:
                     removal_List.append(issue)
             else:
                 createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-                if high_window < (createdDate - begin).days:
+                if highWindow < (createdDate - begin).days:
                     removal_List.append(issue)
 
         for issue in removal_List:
             data.remove(issue)
 
-    elif high_window is not None and low_window is not None:
+    elif highWindow is not None and lowWindow is not None:
 
         for issue in data:
             if issue["closed_at"] is not None:
                 closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-                if high_window < (closedDate - begin).days < low_window:
+                if highWindow < (closedDate - begin).days < lowWindow:
                     removal_List.append(issue)
             else:
                 createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-                if high_window < (createdDate - begin).days < low_window:
+                if highWindow < (createdDate - begin).days < lowWindow:
                     removal_List.append(issue)
 
         for issue in removal_List:
@@ -117,12 +102,27 @@ def getIssueEngagementReport(
 
     return data
 
+def extractJSON(inputJSON: str) ->  dict:
+    with open(inputJSON, "r") as file:
+        issues: list = json.load(file)
+        data: list = [
+            dict(
+                issue_number = issue["number"],
+                comments = issue["comments"],
+                created_at = issue["created_at"],
+                closed_at = issue["closed_at"],
+                state = issue["state"],
+            )
+            for issue in issues
+        ]
+        file.close()
+
+    return data
 
 def storeJSON(
     issues: list,
     output_file: str,
 ) -> bool:
-    # json.dump(issues)
     data = json.dumps(issues)
     with open(file=output_file, mode="w") as json_file:
         json_file.write(data)
@@ -130,12 +130,16 @@ def storeJSON(
 
 
 def main() -> None:
-    args: Namespace = get_argparse()
+    args: Namespace = getArgparse()
 
-    issues_json = getIssueEngagementReport(
-        input_json=args.input,
-        low_window=args.lower_window_bound,
-        high_window=args.upper_window_bound,
+
+
+    data: list = extractJSON(inputJSON=args.input)
+
+    issues_json = calculateIssueSpoilage(
+        data=data,
+        lowWindow=args.lower_window_bound,
+        highWindow=args.upper_window_bound,
     )
 
     storeJSON(
