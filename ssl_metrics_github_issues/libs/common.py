@@ -1,4 +1,3 @@
-import json
 from json import dumps, load
 from os import sep
 from os.path import exists
