@@ -2,7 +2,6 @@ import json
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from os.path import exists
-from typing import Type
 
 from dateutil.parser import parse
 
@@ -49,79 +48,106 @@ def getArgparse() -> Namespace:
 
 def calculateIssueSpoilage(
     data: list,
-    lowWindow: int,
-    highWindow: int,
+    lowWindow: int = 0,
+    highWindow: int = None,
 ) -> list:
+    inBoundsData: list = []
 
-    removal_List = []
+    issue: dict
+    for issue in data:
+        createdAt: datetime = parse(issue["created_at"]).replace(tzinfo=None)
+        closedAt: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
 
-    begin: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
+        if closedAt is None:
+            closedAt = dateN
 
-    if highWindow is None and lowWindow is not None:
+        if highWindow is None:
+            if lowWindow <= (createdAt - date0).days:
+                inBoundsData.append(issue)
+        else:
+            if (lowWindow <= (createdAt - date0).days) and (
+                highWindow >= (closedAt).days
+            ):
+                inBoundsData.append(issue)
 
-        for issue in data:
-            createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-            if lowWindow > (createdDate - begin).days:
-                removal_List.append(issue)
+        return inBoundsData
 
-        for issue in removal_List:
-            data.remove(issue)
+    # for issue in data:
+    #     if issue["closed_at"] is not None:
+    #         closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
+    #         if highWindow < (closedDate - date0).days:
+    #             removal_List.append(issue)
+    #     else:
+    #         createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
+    #         if highWindow < (createdDate - date0).days:
+    #             removal_List.append(issue)
 
-    elif lowWindow is None and highWindow is not None:
+    #     for issue in removal_List:
+    #         data.remove(issue)
 
-        for issue in data:
-            if issue["closed_at"] is not None:
-                closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-                if highWindow < (closedDate - begin).days:
-                    removal_List.append(issue)
-            else:
-                createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-                if highWindow < (createdDate - begin).days:
-                    removal_List.append(issue)
+    # elif highWindow is not None and lowWindow is not None:
 
-        for issue in removal_List:
-            data.remove(issue)
+    #     for issue in data:
+    #         if issue["closed_at"] is not None:
+    #             closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
+    #             if highWindow < (closedDate - begin).days < lowWindow:
+    #                 removal_List.append(issue)
+    #         else:
+    #             createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
+    #             if highWindow < (createdDate - begin).days < lowWindow:
+    #                 removal_List.append(issue)
 
-    elif highWindow is not None and lowWindow is not None:
+    #     for issue in removal_List:
+    #         data.remove(issue)
 
-        for issue in data:
-            if issue["closed_at"] is not None:
-                closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-                if highWindow < (closedDate - begin).days < lowWindow:
-                    removal_List.append(issue)
-            else:
-                createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-                if highWindow < (createdDate - begin).days < lowWindow:
-                    removal_List.append(issue)
+    # else:
 
-        for issue in removal_List:
-            data.remove(issue)
+    #     data = data
 
-    else:
-
-        data = data
-
-    return data
+    # return data
 
 
 def extractJSON(inputJSON: str) -> dict:
+    issues: list = None
+
     try:
         with open(inputJSON, "r") as file:
             issues: list = json.load(file)
-            data: list = [
-                dict(
-                    issue_number=issue["number"],
-                    comments=issue["comments"],
-                    created_at=issue["created_at"],
-                    closed_at=issue["closed_at"],
-                    state=issue["state"],
-                )
-                for issue in issues
-            ]
             file.close()
     except FileNotFoundError:
         print(f"{inputJSON} does not exist.")
         quit(3)
+
+    date0: datetime = parse(issues[0]["created_at"]).replace(tzinfo=None)
+    dateN: datetime = datetime.today().replace(tzinfo=None)
+    data: list = []
+
+    issue: dict
+    for issue in issues:
+        value: dict = {
+            "issue_number": None,
+            "created_at": None,
+            "created_at_day": None,
+            "closed_at": None,
+            "closed_at_day": None,
+            "state": None,
+        }
+
+        value["issue_number"] = issue["number"]
+        value["created_at"] = issue["created_at"]
+        value["closed_at"] = issue["closed_at"]
+        value["state"] = issue["state"]
+
+        createdAtDay: datetime = parse(issue["created_at"]).replace(tzinfo=None)
+
+        value["created_at_day"] = (createdAtDay - date0).days
+
+        if value["state"] == "open":
+            value["closed_at_day"] = (dateN - date0).days
+        else:
+            value["closed_at_day"] =(parse(issue["closed_at"]).replace(tzinfo=None) - date0).days
+
+        data.append(value)
 
     return data
 
@@ -152,14 +178,14 @@ def main() -> None:
 
     data: list = extractJSON(inputJSON=args.input)
 
-    issues_json = calculateIssueSpoilage(
-        data=data,
-        lowWindow=args.lower_window_bound,
-        highWindow=args.upper_window_bound,
-    )
+    # issueSpoilage: list = calculateIssueSpoilage(
+    #     data=data,
+    #     lowWindow=args.lower_window_bound,
+    #     highWindow=args.upper_window_bound,
+    # )
 
     storeJSON(
-        issues=issues_json,
+        issues=data,
         output_file=args.save_json,
     )
 
