@@ -26,7 +26,7 @@ def getArgparse() -> Namespace:
         help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
         type=int,
         required=False,
-        default=None
+        default=None,
     )
     parser.add_argument(
         "-l",
@@ -34,7 +34,7 @@ def getArgparse() -> Namespace:
         help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
         type=int,
         required=False,
-        default=0
+        default=0,
     )
     parser.add_argument(
         "-s",
@@ -103,17 +103,18 @@ def calculateIssueSpoilage(
 
     return data
 
-def extractJSON(inputJSON: str) ->  dict:
+
+def extractJSON(inputJSON: str) -> dict:
     try:
         with open(inputJSON, "r") as file:
             issues: list = json.load(file)
             data: list = [
                 dict(
-                    issue_number = issue["number"],
-                    comments = issue["comments"],
-                    created_at = issue["created_at"],
-                    closed_at = issue["closed_at"],
-                    state = issue["state"],
+                    issue_number=issue["number"],
+                    comments=issue["comments"],
+                    created_at=issue["created_at"],
+                    closed_at=issue["closed_at"],
+                    state=issue["state"],
                 )
                 for issue in issues
             ]
@@ -123,6 +124,7 @@ def extractJSON(inputJSON: str) ->  dict:
         quit(3)
 
     return data
+
 
 def storeJSON(
     issues: list,

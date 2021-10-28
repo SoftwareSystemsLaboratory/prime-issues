@@ -23,12 +23,13 @@ def getLastPage(response: Response) -> int:
     return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
-def readJSON(filename: str = "issues.json") ->  list:
+def readJSON(filename: str = "issues.json") -> list:
     data: list = []
     with open(file=filename, mode="r") as jsonFile:
         data = load(jsonFile)
         jsonFile.close()
     return exists(filename)
+
 
 def storeJSON(json: list, filename: str = "issues.json") -> bool:
     data: str = dumps(json)
