@@ -55,7 +55,7 @@ def extractJSON(inputJSON: str) -> dict:
             file.close()
     except FileNotFoundError:
         print(f"{inputJSON} does not exist.")
-        quit(3)
+        quit(4)
 
     day0: datetime = parse(issues[0]["created_at"]).replace(tzinfo=None)
     dayN: datetime = datetime.today().replace(tzinfo=None)
@@ -121,12 +121,12 @@ def reduceDataSet(
 
 def storeJSON(
     issues: list,
-    output_file: str,
+    outputFile: str,
 ) -> bool:
     data = json.dumps(issues)
-    with open(file=output_file, mode="w") as json_file:
+    with open(file=outputFile, mode="w") as json_file:
         json_file.write(data)
-    return exists(output_file)
+    return exists(outputFile)
 
 
 def main() -> None:
@@ -143,6 +143,10 @@ def main() -> None:
         print("Invlaid lower window bound. Use integer >= 0")
         quit(2)
 
+    if args.lower_window_bound == args.upper_window_bound:
+        print("Invlaid lower window bound and upper window bound. Use integers >= 0 and different from each other")
+        quit(3)
+
     baseData: list = extractJSON(inputJSON=args.input)
 
     reducedData: list = reduceDataSet(
@@ -153,7 +157,7 @@ def main() -> None:
 
     storeJSON(
         issues=reducedData,
-        output_file=args.save_json,
+        outputFile=args.save_json,
     )
 
 
