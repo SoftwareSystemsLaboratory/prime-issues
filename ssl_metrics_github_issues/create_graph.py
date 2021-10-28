@@ -11,7 +11,7 @@ from matplotlib.figure import Figure
 from progress.bar import Bar
 
 
-def get_argparse() -> Namespace:
+def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="Graph GitHub Issues",
         usage="This program outputs a series of graphs based on GitHub issue data.",
@@ -30,15 +30,13 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
-
-    parser.add_argument(
-        "-l",
-        "--line-of-issues-spoilage-filename",
-        help="The filename of the output graph of spoiled issues",
-        type=str,
-        required=True,
-    )
-
+    # parser.add_argument(
+    #     "-l",
+    #     "--line-of-issues-spoilage-filename",
+    #     help="The filename of the output graph of spoiled issues",
+    #     type=str,
+    #     required=True,
+    # )
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
@@ -53,18 +51,19 @@ def get_argparse() -> Namespace:
         type=str,
         required=True,
     )
-
     return parser.parse_args()
 
 
-def loadJSON(filename: str = "issues.json") -> list:
-    with open(file=filename, mode="r") as jsonFile:
-        return load(jsonFile)
+def loadJSON(filename: str) -> list:
+    try:
+        with open(file=filename, mode="r") as jsonFile:
+            return load(jsonFile)
+    except FileExistsError:
+        print(f"{filename} does not exist.")
+        quit(1)
 
 
-def createIntervalTree(
-    data: list, filename: str = "issues_to_graph1.json"
-) -> IntervalTree:
+def createIntervalTree(data: list, filename: str) -> IntervalTree:
     tree: IntervalTree = IntervalTree()
     day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
@@ -257,7 +256,7 @@ def fillDictBasedOnKeyValue(
 
 
 def main() -> None:
-    args: Namespace = get_argparse()
+    args: Namespace = getArgparse()
 
     if args.input[-5::] != ".json":
         print("Invalid input file type. Input file must be JSON")

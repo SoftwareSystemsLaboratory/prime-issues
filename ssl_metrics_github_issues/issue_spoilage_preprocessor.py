@@ -46,30 +46,6 @@ def getArgparse() -> Namespace:
     return parser.parse_args()
 
 
-def reduceDataSet(
-    data: list,
-    lowWindow: int = 0,
-    highWindow: int = None,
-) -> list:
-    inBoundsData: list = []
-
-    issue: dict
-    for issue in data:
-
-        print(type(issue["created_at_day"]))
-
-        if highWindow is None:
-            if lowWindow <= issue["created_at_day"]:
-                inBoundsData.append(issue)
-        else:
-            if (lowWindow <= issue["created_at_day"]) and (
-                (highWindow >= issue["created_at_day"])
-            ):
-                inBoundsData.append(issue)
-
-    return inBoundsData
-
-
 def extractJSON(inputJSON: str) -> dict:
     issues: list = None
 
@@ -81,8 +57,8 @@ def extractJSON(inputJSON: str) -> dict:
         print(f"{inputJSON} does not exist.")
         quit(3)
 
-    date0: datetime = parse(issues[0]["created_at"]).replace(tzinfo=None)
-    dateN: datetime = datetime.today().replace(tzinfo=None)
+    day0: datetime = parse(issues[0]["created_at"]).replace(tzinfo=None)
+    dayN: datetime = datetime.today().replace(tzinfo=None)
     data: list = []
 
     issue: dict
@@ -98,23 +74,49 @@ def extractJSON(inputJSON: str) -> dict:
 
         value["issue_number"] = issue["number"]
         value["created_at"] = issue["created_at"]
-        value["closed_at"] = issue["closed_at"]
         value["state"] = issue["state"]
+
+        if issue["closed_at"] is None:
+            value["closed_at"] = dayN.strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            value["closed_at"] = issue["closed_at"]
 
         createdAtDay: datetime = parse(issue["created_at"]).replace(tzinfo=None)
 
-        value["created_at_day"] = (createdAtDay - date0).days
+        value["created_at_day"] = (createdAtDay - day0).days
 
         if value["state"] == "open":
-            value["closed_at_day"] = (dateN - date0).days
+            value["closed_at_day"] = (dayN - day0).days
         else:
             value["closed_at_day"] = (
-                parse(issue["closed_at"]).replace(tzinfo=None) - date0
+                parse(issue["closed_at"]).replace(tzinfo=None) - day0
             ).days
 
         data.append(value)
 
     return data
+
+
+def reduceDataSet(
+    data: list,
+    lowWindow: int = 0,
+    highWindow: int = None,
+) -> list:
+    inBoundsData: list = []
+
+    issue: dict
+    for issue in data:
+
+        if highWindow is None:
+            if lowWindow <= issue["created_at_day"]:
+                inBoundsData.append(issue)
+        else:
+            if (lowWindow <= issue["created_at_day"]) and (
+                (highWindow >= issue["created_at_day"])
+            ):
+                inBoundsData.append(issue)
+
+    return inBoundsData
 
 
 def storeJSON(
