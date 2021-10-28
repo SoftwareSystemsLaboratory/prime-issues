@@ -2,6 +2,7 @@ import json
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from os.path import exists
+from typing import Type
 
 from dateutil.parser import parse
 
@@ -25,7 +26,7 @@ def getArgparse() -> Namespace:
         help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
         type=int,
         required=False,
-        default=-1
+        default=None
     )
     parser.add_argument(
         "-l",
@@ -103,19 +104,23 @@ def calculateIssueSpoilage(
     return data
 
 def extractJSON(inputJSON: str) ->  dict:
-    with open(inputJSON, "r") as file:
-        issues: list = json.load(file)
-        data: list = [
-            dict(
-                issue_number = issue["number"],
-                comments = issue["comments"],
-                created_at = issue["created_at"],
-                closed_at = issue["closed_at"],
-                state = issue["state"],
-            )
-            for issue in issues
-        ]
-        file.close()
+    try:
+        with open(inputJSON, "r") as file:
+            issues: list = json.load(file)
+            data: list = [
+                dict(
+                    issue_number = issue["number"],
+                    comments = issue["comments"],
+                    created_at = issue["created_at"],
+                    closed_at = issue["closed_at"],
+                    state = issue["state"],
+                )
+                for issue in issues
+            ]
+            file.close()
+    except FileNotFoundError:
+        print(f"{inputJSON} does not exist.")
+        quit(3)
 
     return data
 
@@ -132,9 +137,12 @@ def storeJSON(
 def main() -> None:
     args: Namespace = getArgparse()
 
-    if args.upper_window_bound <= 0:
-        print("Invalid upper window bound. Use integert > 0")
-        quit(1)
+    try:
+        if args.upper_window_bound <= 0:
+            print("Invalid upper window bound. Use integert > 0")
+            quit(1)
+    except TypeError:
+        pass
 
     if args.lower_window_bound < 0:
         print("Invlaid lower window bound. Use integer >= 0")
