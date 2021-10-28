@@ -1,10 +1,10 @@
 import json
-
 # TODO specify from _ import _
 import pathlib
 from argparse import ArgumentParser, Namespace
-from os.path import exists
 from datetime import datetime
+from os.path import exists
+
 from dateutil.parser import parse
 
 
@@ -70,7 +70,7 @@ def getIssueEngagementReport(
 
     removal_List = []
 
-    begin: datetime = parse(data[0]['created_at']).replace(tzinfo=None)
+    begin: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
     if high_window is None and low_window is not None:
 
@@ -87,7 +87,7 @@ def getIssueEngagementReport(
         for issue in data:
             if issue["closed_at"] is not None:
                 closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-                if high_window < (closedDate-begin).days:
+                if high_window < (closedDate - begin).days:
                     removal_List.append(issue)
             else:
                 createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)

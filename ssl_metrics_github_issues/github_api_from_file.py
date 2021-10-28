@@ -1,9 +1,10 @@
 from argparse import ArgumentParser, Namespace
 
-from libs.common import getLastPage, readJSON, storeJSON
 from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
+
+from libs.common import getLastPage, readJSON, storeJSON
 
 
 def get_argparse() -> Namespace:
