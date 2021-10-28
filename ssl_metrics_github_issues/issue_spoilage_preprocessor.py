@@ -130,7 +130,7 @@ def main() -> None:
 
     try:
         if args.upper_window_bound <= 0:
-            print("Invalid upper window bound. Use integert > 0")
+            print("Invalid upper window bound. Use integer > 0")
             quit(1)
     except TypeError:
         pass
