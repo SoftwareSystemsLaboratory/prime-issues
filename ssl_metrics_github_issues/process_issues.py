@@ -8,7 +8,7 @@ from dateutil.parser import parse
 
 def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
-        prog="GH Issue Engagement",
+        prog="GH Issue Spoilage Preprocessor",
         usage="This program generates JSON file containing specific data related to a repositories issue engagement.",
     )
     parser.add_argument(
