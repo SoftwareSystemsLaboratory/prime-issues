@@ -46,7 +46,7 @@ def getArgparse() -> Namespace:
     return parser.parse_args()
 
 
-def calculateIssueSpoilage(
+def reduceDataSet(
     data: list,
     lowWindow: int = 0,
     highWindow: int = None,
@@ -55,56 +55,19 @@ def calculateIssueSpoilage(
 
     issue: dict
     for issue in data:
-        createdAt: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-        closedAt: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
 
-        if closedAt is None:
-            closedAt = dateN
+        print(type(issue["created_at_day"]))
 
         if highWindow is None:
-            if lowWindow <= (createdAt - date0).days:
+            if lowWindow <= issue["created_at_day"]:
                 inBoundsData.append(issue)
         else:
-            if (lowWindow <= (createdAt - date0).days) and (
-                highWindow >= (closedAt).days
+            if (lowWindow <= issue["created_at_day"]) and (
+                (highWindow >= issue["created_at_day"])
             ):
                 inBoundsData.append(issue)
 
-        return inBoundsData
-
-    # for issue in data:
-    #     if issue["closed_at"] is not None:
-    #         closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-    #         if highWindow < (closedDate - date0).days:
-    #             removal_List.append(issue)
-    #     else:
-    #         createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-    #         if highWindow < (createdDate - date0).days:
-    #             removal_List.append(issue)
-
-    #     for issue in removal_List:
-    #         data.remove(issue)
-
-    # elif highWindow is not None and lowWindow is not None:
-
-    #     for issue in data:
-    #         if issue["closed_at"] is not None:
-    #             closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-    #             if highWindow < (closedDate - begin).days < lowWindow:
-    #                 removal_List.append(issue)
-    #         else:
-    #             createdDate: datetime = parse(issue["created_at"]).replace(tzinfo=None)
-    #             if highWindow < (createdDate - begin).days < lowWindow:
-    #                 removal_List.append(issue)
-
-    #     for issue in removal_List:
-    #         data.remove(issue)
-
-    # else:
-
-    #     data = data
-
-    # return data
+    return inBoundsData
 
 
 def extractJSON(inputJSON: str) -> dict:
@@ -176,16 +139,16 @@ def main() -> None:
         print("Invlaid lower window bound. Use integer >= 0")
         quit(2)
 
-    data: list = extractJSON(inputJSON=args.input)
+    baseData: list = extractJSON(inputJSON=args.input)
 
-    # issueSpoilage: list = calculateIssueSpoilage(
-    #     data=data,
-    #     lowWindow=args.lower_window_bound,
-    #     highWindow=args.upper_window_bound,
-    # )
+    reducedData: list = reduceDataSet(
+        data=baseData,
+        lowWindow=args.lower_window_bound,
+        highWindow=args.upper_window_bound,
+    )
 
     storeJSON(
-        issues=data,
+        issues=reducedData,
         output_file=args.save_json,
     )
 
