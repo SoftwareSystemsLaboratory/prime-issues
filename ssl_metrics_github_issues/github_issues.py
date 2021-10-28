@@ -26,7 +26,7 @@ def get_argparse() -> Namespace:
         help='GitHub repository to be used. NOTE: Format needs to be "OWNER/REPO". DEFAULT: numpy/numpy',
         default="numpy/numpy",
         type=str,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-s",
