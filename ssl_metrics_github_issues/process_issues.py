@@ -132,7 +132,13 @@ def storeJSON(
 def main() -> None:
     args: Namespace = getArgparse()
 
+    if args.upper_window_bound <= 0:
+        print("Invalid upper window bound. Use integert > 0")
+        quit(1)
 
+    if args.lower_window_bound < 0:
+        print("Invlaid lower window bound. Use integer >= 0")
+        quit(2)
 
     data: list = extractJSON(inputJSON=args.input)
 
