@@ -20,14 +20,6 @@ def getArgparse() -> Namespace:
         required=True,
     )
     parser.add_argument(
-        "-u",
-        "--upper-window-bound",
-        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
-        type=int,
-        required=False,
-        default=None,
-    )
-    parser.add_argument(
         "-l",
         "--lower-window-bound",
         help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
@@ -42,6 +34,14 @@ def getArgparse() -> Namespace:
         default="issue_spoilage.json",
         type=str,
         required=True,
+    )
+    parser.add_argument(
+        "-u",
+        "--upper-window-bound",
+        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=None,
     )
     return parser.parse_args()
 
