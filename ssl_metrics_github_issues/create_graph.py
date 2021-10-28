@@ -2,7 +2,6 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from json import load
 from os.path import exists
-from typing import Any, KeysView
 
 import matplotlib.pyplot as plt
 from dateutil.parser import parse
@@ -183,7 +182,7 @@ def plot_ClosedIssuesPerDay_Line(
     data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
-    figure.savefig(filename)
+    figure.savefig(filename
 
     return exists(filename)
 
