@@ -84,7 +84,7 @@ def getIssueEngagementReport(
 
     elif low_window is None and high_window is not None:
 
-        for issue in data:
+        for issue in data: # TODO: Change the analysis from closed date to created at date
             if issue["closed_at"] is not None:
                 closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
                 if high_window < (closedDate-begin).days:

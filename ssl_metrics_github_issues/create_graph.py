@@ -21,14 +21,14 @@ def get_argparse() -> Namespace:
         "--closed-issues-graph-filename",
         help="The filename of the output graph of closed issues",
         type=str,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-i",
         "--input",
         help="The input JSON file that is to be used for graphing",
         type=str,
-        required=True,
+        required=False,
     )
 
 
@@ -37,7 +37,7 @@ def get_argparse() -> Namespace:
         "--line-of-issues-spoilage-filename",
         help="The filename of the output graph of spoiled issues",
         type=str,
-        required=True,
+        required=False,
     )
 
     parser.add_argument(
@@ -45,7 +45,7 @@ def get_argparse() -> Namespace:
         "--open-issues-graph-filename",
         help="The filename of the output graph of open issues",
         type=str,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-x",
@@ -73,7 +73,7 @@ def createIntervalTree(data: list, filename: str = "issues_to_graph1.json") -> I
 
             if issue["state"] == "closed":
                 closedDate: datetime = parse(issue["closed_at"]).replace(tzinfo=None)
-            else:
+            else:  # Todo: set closed date to highwindow
                 closedDate: datetime = datetime.now(tz=None)
 
             begin: int = (createdDate - day0).days
