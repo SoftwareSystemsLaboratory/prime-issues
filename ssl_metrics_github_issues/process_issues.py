@@ -1,6 +1,4 @@
 import json
-# TODO specify from _ import _
-import pathlib
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from os.path import exists
@@ -16,8 +14,7 @@ def get_argparse() -> Namespace:
     parser.add_argument(
         "-i",
         "--input",
-        help="Raw repository issues json file to be used. These files can be generated using the "
-        "ssl-metrics-github-issues tool.",
+        help="Raw repository issues JSON file to be used. These files can be generated using the ssl-metrics-github-issues tool.",
         default="issues.json",
         type=str,
         required=True,
@@ -28,6 +25,7 @@ def get_argparse() -> Namespace:
         help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
         type=int,
         required=False,
+        default=-1
     )
     parser.add_argument(
         "-l",
@@ -35,12 +33,13 @@ def get_argparse() -> Namespace:
         help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
         type=int,
         required=False,
+        default=0
     )
     parser.add_argument(
         "-s",
         "--save-json",
         help="Specify name to save analysis to JSON file.",
-        default="issue_engagement.json",
+        default="issue_spoilage.json",
         type=str,
         required=True,
     )
