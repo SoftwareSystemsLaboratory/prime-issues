@@ -129,8 +129,8 @@ def issue_spoilage_data(
 
 
 def plot_IssueSpoilagePerDay(
-    pregeneratedData: list = None,
-    filename: str = "line-of-issues-spoilage_per_day.png",
+    pregeneratedData: list,
+    filename: str,
 ):
     figure: Figure = plt.figure()
 
