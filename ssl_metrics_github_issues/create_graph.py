@@ -1,7 +1,9 @@
 from argparse import ArgumentParser, Namespace
+from collections import KeysView  # had to import this
 from datetime import datetime
 from json import load
 from os.path import exists
+from typing import Any  # had to import this
 
 import matplotlib.pyplot as plt
 from dateutil.parser import parse
@@ -29,13 +31,13 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
-    # parser.add_argument(
-    #     "-l",
-    #     "--line-of-issues-spoilage-filename",
-    #     help="The filename of the output graph of spoiled issues",
-    #     type=str,
-    #     required=True,
-    # )
+    parser.add_argument(
+        "-l",
+        "--line-of-issues-spoilage-filename",
+        help="The filename of the output graph of spoiled issues",
+        type=str,
+        required=True,
+    )
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
@@ -182,7 +184,7 @@ def plot_ClosedIssuesPerDay_Line(
     data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
-    figure.savefig(filename
+    figure.savefig(filename)
 
     return exists(filename)
 

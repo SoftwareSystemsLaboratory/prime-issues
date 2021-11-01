@@ -110,6 +110,9 @@ def reduceDataSet(
         if highWindow is None:
             if lowWindow <= issue["created_at_day"]:
                 inBoundsData.append(issue)
+        elif lowWindow is None:
+            if highWindow >= issue["created_at_day"]:
+                inBoundsData.append(issue)
         else:
             if (lowWindow <= issue["created_at_day"]) and (
                 (highWindow >= issue["created_at_day"])
