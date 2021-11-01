@@ -112,11 +112,15 @@ def reduceDataSet(
                 inBoundsData.append(issue)
         elif lowWindow is None:
             if highWindow >= issue["created_at_day"]:
+                if issue["closed_at_day"] > highWindow:
+                    issue["closed_at_day"] = highWindow
                 inBoundsData.append(issue)
         else:
             if (lowWindow <= issue["created_at_day"]) and (
                 (highWindow >= issue["created_at_day"])
             ):
+                if issue["closed_at_day"] > highWindow:
+                    issue["closed_at_day"] = highWindow
                 inBoundsData.append(issue)
 
     return inBoundsData
