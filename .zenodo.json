@@ -1,0 +1,22 @@
+{
+  "creators": [
+    {
+      "name": "Synovic, Nicholas",
+      "affiliation": "Loyola University Chicago",
+      "orcid": "0000-0003-0413-4594"
+    },
+    {
+      "name": "Thiruvathukal, George K.",
+      "affiliation": "Loyola University Chicago and Argonne National Laboratory",
+      "orcid": "0000-0002-0452-5571"
+    }
+  ],
+  "keywords": [
+    "software engineering",
+    "software metrics",
+    "repository mining",
+    "git" 
+  ],
+  "license": "GPL-3.0",
+  "upload_type": "software"
+}
