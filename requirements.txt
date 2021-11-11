@@ -1,7 +1,5 @@
-intervaltree
 numpy
 matplotlib
 pandas
-progress
-python-dateutil
 requests
+scikit-learn
