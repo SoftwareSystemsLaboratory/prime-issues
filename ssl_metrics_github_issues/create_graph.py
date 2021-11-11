@@ -38,7 +38,7 @@ def getArgparse() -> Namespace:
         "--closed-issues-graph-filename",
         help="The filename of the output graph of closed issues",
         type=str,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-i",
@@ -52,37 +52,21 @@ def getArgparse() -> Namespace:
         "--line-of-issues-spoilage-filename",
         help="The filename of the output graph of spoiled issues",
         type=str,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
         help="The filename of the output graph of open issues",
         type=str,
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-x",
         "--joint-graph-filename",
         help="The filename of the joint output graph of open and closed issues",
         type=str,
-        required=True,
-    )
-    parser.add_argument(
-        "-l",
-        "--lower-window-bound",
-        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
-        type=int,
         required=False,
-        default=0,
-    )
-    parser.add_argument(
-        "-u",
-        "--upper-window-bound",
-        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
-        type=int,
-        required=False,
-        default=None,
     )
 
     return parser.parse_args()
