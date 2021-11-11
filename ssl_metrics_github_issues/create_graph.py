@@ -170,9 +170,6 @@ def plot_IssueSpoilagePerDay(
 ):
     args: Namespace = getArgparse()
 
-    if args.upper_window_bound != None:
-        if args.upper_window_bound !=
-
     figure: Figure = plt.figure()
 
     plt.title("Number of Spoiled Issues Per Day")
@@ -188,6 +185,15 @@ def plot_IssueSpoilagePerDay(
         values.append(day["number_open"])
 
     plt.plot(keys, values)
+
+    if args.upper_window_bound != None:
+        if args.lower_window_bound != None:
+            plt.xlim(args.lower_window_bound, args.upper_window_bound)
+        else:
+            plt.xlim(0, args.upper_window_bound)
+    else:
+        if args.lower_window_bound != None:
+            plt.xlim(args.lower_window_bound, len(keys))
     figure.savefig(filename)
 
     return exists(filename)
