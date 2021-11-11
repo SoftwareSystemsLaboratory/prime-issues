@@ -187,10 +187,9 @@ def plot_ClosedIssuesPerDay_Line(
     return exists(filename)
 
 
-def plot_OpenClosedSpoiledIssuesPerDay_Line(
+def plot_OpenClosedIssuesPerDay_Line(
     pregeneratedData_OpenIssues: dict = None,
     pregeneratedData_ClosedIssues: dict = None,
-    pregeneratedData_SpoiledIssues: list = None,
     filename: str = "open_closed_issues_per_day_line.png",
 ):
     figure: Figure = plt.figure()
@@ -201,17 +200,9 @@ def plot_OpenClosedSpoiledIssuesPerDay_Line(
 
     openData: dict = pregeneratedData_OpenIssues
     closedData: dict = pregeneratedData_ClosedIssues
-    spoiledData: list = pregeneratedData_SpoiledIssues
-
-    keys = list()
-    values = list()
-    for day in spoiledData:
-        keys.append(day["day"])
-        values.append(day["number_open"])
 
     plt.plot(openData.keys(), openData.values(), color="blue", label="Open Issues")
     plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
-    plt.plot(keys, values, color="green", label="Spoiled Issues")
     plt.legend()
 
     figure.savefig(filename)
@@ -275,10 +266,6 @@ def main() -> None:
         dictionary=baseDict, tree=tree, key="state", value="closed"
     )
 
-    new_list: list = issue_spoilage_data(
-        data=tree,
-    )
-
     plot_OpenIssuesPerDay_Line(
         pregeneratedData=openIssues, filename=args.open_issues_graph_filename
     )
@@ -287,10 +274,9 @@ def main() -> None:
         pregeneratedData=closedIssues, filename=args.closed_issues_graph_filename
     )
 
-    plot_OpenClosedSpoiledIssuesPerDay_Line(
+    plot_OpenClosedIssuesPerDay_Line(
         pregeneratedData_ClosedIssues=closedIssues,
         pregeneratedData_OpenIssues=openIssues,
-        pregeneratedData_SpoiledIssues=new_list,
         filename=args.joint_graph_filename,
     )
 
