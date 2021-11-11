@@ -4,8 +4,8 @@ from datetime import datetime
 from json import load
 from os.path import exists
 from typing import Any  # had to import this
-
 import matplotlib.pyplot as plt
+import numpy as np
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
@@ -216,8 +216,15 @@ def plot_ClosedIssuesPerDay_Line(
 
     data: dict = pregeneratedData
 
-    plt.plot(data.keys(), data.values())
+    x_values = [int(i) for i in data.keys()]
+    y_values = [int(i) for i in data.values()]
+    # z = derivative(x_values, y_values)
+    # p = np.poly1d(z)
+    plt.plot(data.keys(), data.values(), color="blue", label="discrete")
+    # plt.plot(x_values, p(x_values), color="red", label="continuous")
+
     shrink_graph(keys=data.keys())
+    # plt.legend()
     figure.savefig(filename)
 
     return exists(filename)
@@ -284,7 +291,20 @@ def fillDictBasedOnKeyValue(
 
     return data
 
-
+# def derivative(
+#     x_values=None,
+#     y_values=None,
+# ):
+#     x = []
+#     y = []
+#     for i in x_values:
+#         x.append(int(i))
+#     for i in y_values:
+#         y.append(int(i))
+#     x1 = np.array(x)
+#     y1 = np.array(y)
+#     z = np.polyfit(x1, y1, 100)
+#     return z
 def main() -> None:
     args: Namespace = getArgparse()
 
