@@ -38,7 +38,7 @@ def getArgparse() -> Namespace:
         "--closed-issues-graph-filename",
         help="The filename of the output graph of closed issues",
         type=str,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-i",
@@ -52,21 +52,21 @@ def getArgparse() -> Namespace:
         "--line-of-issues-spoilage-filename",
         help="The filename of the output graph of spoiled issues",
         type=str,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
         help="The filename of the output graph of open issues",
         type=str,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-x",
         "--joint-graph-filename",
         help="The filename of the joint output graph of open and closed issues",
         type=str,
-        required=False,
+        required=True,
     )
 
     return parser.parse_args()
@@ -145,15 +145,23 @@ def issue_spoilage_data(
             )
     return list_of_spoilage_values
 
+def shrink_graph(
+  keys=None
+):
+    args: Namespace = getArgparse()
+    if args.upper_window_bound != None:
+        if args.lower_window_bound != None:
+            plt.xlim(args.lower_window_bound, args.upper_window_bound)
+        else:
+            plt.xlim(0, args.upper_window_bound)
+    else:
+        if args.lower_window_bound != None:
+            plt.xlim(args.lower_window_bound, len(keys))
 
 def plot_IssueSpoilagePerDay(
     pregeneratedData: list,
     filename: str,
-    lower_bound=None,
-    upper_bound=None,
 ):
-    args: Namespace = getArgparse()
-
     figure: Figure = plt.figure()
 
     plt.title("Number of Spoiled Issues Per Day")
@@ -170,14 +178,8 @@ def plot_IssueSpoilagePerDay(
 
     plt.plot(keys, values)
 
-    if args.upper_window_bound != None:
-        if args.lower_window_bound != None:
-            plt.xlim(args.lower_window_bound, args.upper_window_bound)
-        else:
-            plt.xlim(0, args.upper_window_bound)
-    else:
-        if args.lower_window_bound != None:
-            plt.xlim(args.lower_window_bound, len(keys))
+    shrink_graph(keys=keys)
+
     figure.savefig(filename)
 
     return exists(filename)
@@ -196,6 +198,7 @@ def plot_OpenIssuesPerDay_Line(
     data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
+    shrink_graph(keys=data.keys())
     figure.savefig(filename)
 
     return exists(filename)
@@ -214,6 +217,7 @@ def plot_ClosedIssuesPerDay_Line(
     data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
+    shrink_graph(keys=data.keys())
     figure.savefig(filename)
 
     return exists(filename)
@@ -245,7 +249,9 @@ def plot_OpenClosedSpoiledIssuesPerDay_Line(
     plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
     plt.plot(keys, values, color="green", label="Spoiled Issues")
     plt.legend()
-
+    shrink_graph(keys=openData.keys())
+    shrink_graph(keys=closedData.keys())
+    shrink_graph(keys=keys)
     figure.savefig(filename)
 
     return exists(filename)
