@@ -8,7 +8,7 @@ from libs.common import getLastPage, storeJSON
 
 def get_argparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
-        prog="GH All issues",
+        prog="GitHub REST Issues API Client",
         usage="This program downloads all issue related data from a GitHub repository",
     )
     parser.add_argument(
@@ -46,7 +46,7 @@ def get_argparse() -> Namespace:
     return parser.parse_args()
 
 
-def getGHIssues(
+def getGitHubIssues(
     repo: str,
     token: str,
     pullRequests: bool = False,
@@ -110,7 +110,7 @@ def testIfPullRequest(dictionary: dict) -> bool:
 def main() -> None:
     args: Namespace = get_argparse()
 
-    issues: list = getGHIssues(
+    issues: list = getGitHubIssues(
         repo=args.repository,
         token=args.token,
         pullRequests=args.pull_requests,
