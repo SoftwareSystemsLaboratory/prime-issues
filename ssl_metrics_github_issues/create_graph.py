@@ -9,13 +9,29 @@ import matplotlib.pyplot as plt
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
-from progress.bar import Bar
+from progress.spinner import MoonSpinner
 
 
 def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="Graph GitHub Issues",
         usage="This program outputs a series of graphs based on GitHub issue data.",
+    )
+    parser.add_argument(
+        "-u",
+        "--upper-window-bound",
+        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "-l",
+        "--lower-window-bound",
+        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=None,
     )
     parser.add_argument(
         "-c",
@@ -32,7 +48,7 @@ def getArgparse() -> Namespace:
         required=True,
     )
     parser.add_argument(
-        "-l",
+        "-d",
         "--line-of-issues-spoilage-filename",
         help="The filename of the output graph of spoiled issues",
         type=str,
@@ -52,6 +68,23 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
+    parser.add_argument(
+        "-l",
+        "--lower-window-bound",
+        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=0,
+    )
+    parser.add_argument(
+        "-u",
+        "--upper-window-bound",
+        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=None,
+    )
+
     return parser.parse_args()
 
 
@@ -66,9 +99,9 @@ def loadJSON(filename: str) -> list:
 
 def createIntervalTree(data: list, filename: str) -> IntervalTree:
     tree: IntervalTree = IntervalTree()
-    day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
+    # day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
-    with Bar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
+    with MoonSpinner(f"Creating interval tree from {filename}... ") as pb:
         issue: dict
         for issue in data:
             begin: int = issue["created_at_day"]
@@ -89,7 +122,7 @@ def createIntervalTree(data: list, filename: str) -> IntervalTree:
 def issue_spoilage_data(
     data: IntervalTree,
 ):
-    startDay: int = data.begin()
+    # startDay: int = data.begin()
     endDay: int = data.end()
     list_of_spoilage_values = []
     list_of_intervals = []
@@ -132,7 +165,14 @@ def issue_spoilage_data(
 def plot_IssueSpoilagePerDay(
     pregeneratedData: list,
     filename: str,
+    lower_bound=None,
+    upper_bound=None,
 ):
+    args: Namespace = getArgparse()
+
+    if args.upper_window_bound != None:
+        if args.upper_window_bound !=
+
     figure: Figure = plt.figure()
 
     plt.title("Number of Spoiled Issues Per Day")
@@ -230,9 +270,8 @@ def fillDictBasedOnKeyValue(
     maxKeyValue: int = max(keys)
     minKeyValue: int = min(keys)
 
-    with Bar(
-        f'Getting the total number of "{key} = {value}" issues per day... ',
-        max=maxKeyValue,
+    with MoonSpinner(
+        f'Getting the total number of "{key} = {value}" issues per day... '
     ) as pb:
         for x in range(minKeyValue, maxKeyValue):
             try:

@@ -19,14 +19,14 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
-    parser.add_argument(
-        "-l",
-        "--lower-window-bound",
-        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
-        type=int,
-        required=False,
-        default=0,
-    )
+    # parser.add_argument(
+    #     "-l",
+    #     "--lower-window-bound",
+    #     help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
+    #     type=int,
+    #     required=False,
+    #     default=0,
+    # )
     parser.add_argument(
         "-s",
         "--save-json",
@@ -35,14 +35,14 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
-    parser.add_argument(
-        "-u",
-        "--upper-window-bound",
-        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
-        type=int,
-        required=False,
-        default=None,
-    )
+    # parser.add_argument(
+    #     "-u",
+    #     "--upper-window-bound",
+    #     help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
+    #     type=int,
+    #     required=False,
+    #     default=None,
+    # )
     return parser.parse_args()
 
 
@@ -97,33 +97,33 @@ def extractJSON(inputJSON: str) -> dict:
     return data
 
 
-def reduceDataSet(
-    data: list,
-    lowWindow: int = 0,
-    highWindow: int = None,
-) -> list:
-    inBoundsData: list = []
-
-    issue: dict
-    for issue in data:
-
-        if highWindow is None:
-            if lowWindow <= issue["created_at_day"]:
-                inBoundsData.append(issue)
-        elif lowWindow is None:
-            if highWindow >= issue["created_at_day"]:
-                if issue["closed_at_day"] > highWindow:
-                    issue["closed_at_day"] = highWindow
-                inBoundsData.append(issue)
-        else:
-            if (lowWindow <= issue["created_at_day"]) and (
-                (highWindow >= issue["created_at_day"])
-            ):
-                if issue["closed_at_day"] > highWindow:
-                    issue["closed_at_day"] = highWindow
-                inBoundsData.append(issue)
-
-    return inBoundsData
+# def reduceDataSet(
+#     data: list,
+#     lowWindow: int = 0,
+#     highWindow: int = None,
+# ) -> list:
+#     inBoundsData: list = []
+#
+#     issue: dict
+#     for issue in data:
+#
+#         if highWindow is None:
+#             if lowWindow <= issue["created_at_day"]:
+#                 inBoundsData.append(issue)
+#         elif lowWindow is None:
+#             if highWindow >= issue["created_at_day"]:
+#                 if issue["closed_at_day"] > highWindow:
+#                     issue["closed_at_day"] = highWindow
+#                 inBoundsData.append(issue)
+#         else:
+#             if (lowWindow <= issue["created_at_day"]) and (
+#                 (highWindow >= issue["created_at_day"])
+#             ):
+#                 if issue["closed_at_day"] > highWindow:
+#                     issue["closed_at_day"] = highWindow
+#                 inBoundsData.append(issue)
+#
+#     return inBoundsData
 
 
 def storeJSON(
@@ -139,31 +139,31 @@ def storeJSON(
 def main() -> None:
     args: Namespace = getArgparse()
 
-    try:
-        if args.upper_window_bound <= 0:
-            print("Invalid upper window bound. Use integer > 0")
-            quit(1)
-    except TypeError:
-        pass
+    # try:
+    #     if args.upper_window_bound <= 0:
+    #         print("Invalid upper window bound. Use integer > 0")
+    #         quit(1)
+    # except TypeError:
+    #     pass
 
-    if args.lower_window_bound < 0:
-        print("Invlaid lower window bound. Use integer >= 0")
-        quit(2)
-
-    if args.lower_window_bound == args.upper_window_bound:
-        print("Invlaid lower window bound and upper window bound. Use integers >= 0 and different from each other")
-        quit(3)
+    # if args.lower_window_bound < 0:
+    #     print("Invlaid lower window bound. Use integer >= 0")
+    #     quit(2)
+    #
+    # if args.lower_window_bound == args.upper_window_bound:
+    #     print("Invlaid lower window bound and upper window bound. Use integers >= 0 and different from each other")
+    #     quit(3)
 
     baseData: list = extractJSON(inputJSON=args.input)
 
-    reducedData: list = reduceDataSet(
-        data=baseData,
-        lowWindow=args.lower_window_bound,
-        highWindow=args.upper_window_bound,
-    )
+    # reducedData: list = reduceDataSet(
+    #     data=baseData,
+    #     lowWindow=args.lower_window_bound,
+    #     highWindow=args.upper_window_bound,
+    # )
 
     storeJSON(
-        issues=reducedData,
+        issues=baseData,
         outputFile=args.save_json,
     )
 
