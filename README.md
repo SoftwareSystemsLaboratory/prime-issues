@@ -4,18 +4,6 @@
 
 [![Publish to PyPi](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml/badge.svg)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml)
 
-## Table of Contents
-
-- [SSL Metrics GitHub Issues](#ssl-metrics-github-issues)
-  - [Table of Contents](#table-of-contents)
-  - [About](#about)
-  - [How to Run](#how-to-run)
-    - [Note on Command Line Arguments](#note-on-command-line-arguments)
-    - [From pip](#from-pip)
-    - [Command Line Arguments](#command-line-arguments)
-      - [ssl-metrics-github-issues-collect](#ssl-metrics-github-issues-collect)
-      - [ssl-metrics-github-issues-graph](#ssl-metrics-github-issues-graph)
-        - [Note on Graph Export Options](#note-on-graph-export-options)
 
 ## About
 
