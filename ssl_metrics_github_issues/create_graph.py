@@ -1,19 +1,37 @@
 from argparse import ArgumentParser, Namespace
+from collections import KeysView  # had to import this
 from datetime import datetime
 from json import load
 from os.path import exists
-
+from typing import Any  # had to import this
 import matplotlib.pyplot as plt
+import numpy as np
 from dateutil.parser import parse
 from intervaltree import IntervalTree
 from matplotlib.figure import Figure
-from progress.bar import Bar
+from progress.spinner import MoonSpinner
 
 
 def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog="Graph GitHub Issues",
         usage="This program outputs a series of graphs based on GitHub issue data.",
+    )
+    parser.add_argument(
+        "-u",
+        "--upper-window-bound",
+        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "-l",
+        "--lower-window-bound",
+        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
+        type=int,
+        required=False,
+        default=None,
     )
     parser.add_argument(
         "-c",
@@ -29,13 +47,13 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
-    # parser.add_argument(
-    #     "-l",
-    #     "--line-of-issues-spoilage-filename",
-    #     help="The filename of the output graph of spoiled issues",
-    #     type=str,
-    #     required=True,
-    # )
+    parser.add_argument(
+        "-d",
+        "--line-of-issues-spoilage-filename",
+        help="The filename of the output graph of spoiled issues",
+        type=str,
+        required=True,
+    )
     parser.add_argument(
         "-o",
         "--open-issues-graph-filename",
@@ -50,6 +68,7 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
+
     return parser.parse_args()
 
 
@@ -64,9 +83,9 @@ def loadJSON(filename: str) -> list:
 
 def createIntervalTree(data: list, filename: str) -> IntervalTree:
     tree: IntervalTree = IntervalTree()
-    day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
+    # day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
 
-    with Bar(f"Creating interval tree from {filename}... ", max=len(data)) as pb:
+    with MoonSpinner(f"Creating interval tree from {filename}... ") as pb:
         issue: dict
         for issue in data:
             begin: int = issue["created_at_day"]
@@ -87,7 +106,7 @@ def createIntervalTree(data: list, filename: str) -> IntervalTree:
 def issue_spoilage_data(
     data: IntervalTree,
 ):
-    startDay: int = data.begin()
+    # startDay: int = data.begin()
     endDay: int = data.end()
     list_of_spoilage_values = []
     list_of_intervals = []
@@ -126,6 +145,18 @@ def issue_spoilage_data(
             )
     return list_of_spoilage_values
 
+def shrink_graph(
+  keys=None
+):
+    args: Namespace = getArgparse()
+    if args.upper_window_bound != None:
+        if args.lower_window_bound != None:
+            plt.xlim(args.lower_window_bound, args.upper_window_bound)
+        else:
+            plt.xlim(0, args.upper_window_bound)
+    else:
+        if args.lower_window_bound != None:
+            plt.xlim(args.lower_window_bound, len(keys))
 
 def plot_IssueSpoilagePerDay(
     pregeneratedData: list,
@@ -146,6 +177,9 @@ def plot_IssueSpoilagePerDay(
         values.append(day["number_open"])
 
     plt.plot(keys, values)
+
+    shrink_graph(keys=keys)
+
     figure.savefig(filename)
 
     return exists(filename)
@@ -164,6 +198,7 @@ def plot_OpenIssuesPerDay_Line(
     data: dict = pregeneratedData
 
     plt.plot(data.keys(), data.values())
+    shrink_graph(keys=data.keys())
     figure.savefig(filename)
 
     return exists(filename)
@@ -181,8 +216,16 @@ def plot_ClosedIssuesPerDay_Line(
 
     data: dict = pregeneratedData
 
-    plt.plot(data.keys(), data.values())
-    figure.savefig(filename
+    x_values = [int(i) for i in data.keys()]
+    y_values = [int(i) for i in data.values()]
+    # z = derivative(x_values, y_values)
+    # p = np.poly1d(z)
+    plt.plot(data.keys(), data.values(), color="blue", label="discrete")
+    # plt.plot(x_values, p(x_values), color="red", label="continuous")
+
+    shrink_graph(keys=data.keys())
+    # plt.legend()
+    figure.savefig(filename)
 
     return exists(filename)
 
@@ -204,7 +247,9 @@ def plot_OpenClosedIssuesPerDay_Line(
     plt.plot(openData.keys(), openData.values(), color="blue", label="Open Issues")
     plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
     plt.legend()
-
+    shrink_graph(keys=openData.keys())
+    shrink_graph(keys=closedData.keys())
+    shrink_graph(keys=keys)
     figure.savefig(filename)
 
     return exists(filename)
@@ -219,9 +264,8 @@ def fillDictBasedOnKeyValue(
     maxKeyValue: int = max(keys)
     minKeyValue: int = min(keys)
 
-    with Bar(
-        f'Getting the total number of "{key} = {value}" issues per day... ',
-        max=maxKeyValue,
+    with MoonSpinner(
+        f'Getting the total number of "{key} = {value}" issues per day... '
     ) as pb:
         for x in range(minKeyValue, maxKeyValue):
             try:
@@ -238,7 +282,20 @@ def fillDictBasedOnKeyValue(
 
     return data
 
-
+# def derivative(
+#     x_values=None,
+#     y_values=None,
+# ):
+#     x = []
+#     y = []
+#     for i in x_values:
+#         x.append(int(i))
+#     for i in y_values:
+#         y.append(int(i))
+#     x1 = np.array(x)
+#     y1 = np.array(y)
+#     z = np.polyfit(x1, y1, 100)
+#     return z
 def main() -> None:
     args: Namespace = getArgparse()
 
