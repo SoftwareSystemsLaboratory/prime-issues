@@ -39,7 +39,7 @@ setup(
         "software engineering",
         "software metrics",
         "software systems laboratory",
-        "ssl"
+        "ssl",
     ],
     python_requires=">=3.9",
     install_requires=[

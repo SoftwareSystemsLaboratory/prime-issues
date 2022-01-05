@@ -1,5 +1,4 @@
 from argparse import ArgumentParser, Namespace
-<<<<<<< HEAD
 from operator import itemgetter
 from os import path
 
@@ -9,54 +8,13 @@ import pandas
 from matplotlib.figure import Figure
 from pandas import DataFrame
 from sklearn.metrics import r2_score
-=======
-from collections import KeysView  # had to import this
-from datetime import datetime
-from json import load
-from os.path import exists
-from typing import Any  # had to import this
-import matplotlib.pyplot as plt
-import numpy as np
-from dateutil.parser import parse
-from intervaltree import IntervalTree
-from matplotlib.figure import Figure
-from progress.spinner import MoonSpinner
->>>>>>> main
 
 
 def getArgparse() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
-<<<<<<< HEAD
         prog="ssl-metrics-git-bus-factor Graph Generator",
         usage="This is a proof of concept demonstrating that it is possible to use git to compute the bus factor of a project.",
         description="The only required arguement of this program is -i/--input. The default action is to do nothing until a filename for the graph is inputted.",
-=======
-        prog="Graph GitHub Issues",
-        usage="This program outputs a series of graphs based on GitHub issue data.",
-    )
-    parser.add_argument(
-        "-u",
-        "--upper-window-bound",
-        help="Argument to specify the max number of days to look at. NOTE: window bounds are inclusive.",
-        type=int,
-        required=False,
-        default=None,
-    )
-    parser.add_argument(
-        "-l",
-        "--lower-window-bound",
-        help="Argument to specify the start of the window of time to analyze. NOTE: window bounds are inclusive.",
-        type=int,
-        required=False,
-        default=None,
-    )
-    parser.add_argument(
-        "-c",
-        "--closed-issues-graph-filename",
-        help="The filename of the output graph of closed issues",
-        type=str,
-        required=True,
->>>>>>> main
     )
     parser.add_argument(
         "-i",
@@ -65,16 +23,6 @@ def getArgparse() -> Namespace:
         type=str,
         required=True,
     )
-<<<<<<< HEAD
-=======
-    parser.add_argument(
-        "-d",
-        "--line-of-issues-spoilage-filename",
-        help="The filename of the output graph of spoiled issues",
-        type=str,
-        required=True,
-    )
->>>>>>> main
     parser.add_argument(
         "-o",
         "--output",
@@ -115,39 +63,9 @@ def getArgparse() -> Namespace:
     return parser.parse_args()
 
 
-<<<<<<< HEAD
 def __findBestFitLine(x: list, y: list, maximumDegrees: int) -> tuple:
     # https://www.w3schools.com/Python/python_ml_polynomial_regression.asp
     data: list = []
-=======
-def loadJSON(filename: str) -> list:
-    try:
-        with open(file=filename, mode="r") as jsonFile:
-            return load(jsonFile)
-    except FileExistsError:
-        print(f"{filename} does not exist.")
-        quit(1)
-
-
-def createIntervalTree(data: list, filename: str) -> IntervalTree:
-    tree: IntervalTree = IntervalTree()
-    # day0: datetime = parse(data[0]["created_at"]).replace(tzinfo=None)
-
-    with MoonSpinner(f"Creating interval tree from {filename}... ") as pb:
-        issue: dict
-        for issue in data:
-            begin: int = issue["created_at_day"]
-            end: int = issue["closed_at_day"]
-
-            try:
-                issue["endDayOffset"] = 0
-                tree.addi(begin=begin, end=end, data=issue)
-            except ValueError:
-                issue["endDayOffset"] = 1
-                tree.addi(begin=begin, end=end + 1, data=issue)
-
-            pb.next()
->>>>>>> main
 
     degree: int
     for degree in range(maximumDegrees):
@@ -158,7 +76,6 @@ def createIntervalTree(data: list, filename: str) -> IntervalTree:
 
     return max(data, key=itemgetter(0))
 
-<<<<<<< HEAD
 
 def _graphFigure(
     repositoryName: str,
@@ -212,160 +129,10 @@ def _graphFigure(
     plt.plot(line, accelerationModel(line))
     plt.tight_layout()
 
-=======
-def issue_spoilage_data(
-    data: IntervalTree,
-):
-    # startDay: int = data.begin()
-    endDay: int = data.end()
-    list_of_spoilage_values = []
-    list_of_intervals = []
-    for i in range(endDay):
-        if i == 1:
-            temp_set = data.overlap(0, 1)
-            proc_overlap = []
-            for issue in temp_set:
-                # if issue.data["state"] == "open":
-                #     proc_overlap.append(issue)
-                if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
-                    proc_overlap.append(issue)
-                    # list_of_intervals.append(issue.end - startDay)
-            list_of_spoilage_values.append(
-                {
-                    "day": i + 1,
-                    "number_open": len(proc_overlap),
-                    "intervals": list_of_intervals,
-                }
-            )
-        else:
-            temp_set = data.overlap(i - 1, i)
-            proc_overlap = []
-            for issue in temp_set:
-                # if issue.data["state"] == "open":
-                #     proc_overlap.append(issue)
-                if issue.begin != issue.end - 1 and issue.data["endDayOffset"] != 1:
-                    proc_overlap.append(issue)
-                    # list_of_intervals.append(issue.end - startDay)
-            list_of_spoilage_values.append(
-                {
-                    "day": i + 1,
-                    "number_open": len(proc_overlap),
-                    "intervals": list_of_intervals,
-                }
-            )
-    return list_of_spoilage_values
-
-def shrink_graph(
-  keys=None
-):
-    args: Namespace = getArgparse()
-    if args.upper_window_bound != None:
-        if args.lower_window_bound != None:
-            plt.xlim(args.lower_window_bound, args.upper_window_bound)
-        else:
-            plt.xlim(0, args.upper_window_bound)
-    else:
-        if args.lower_window_bound != None:
-            plt.xlim(args.lower_window_bound, len(keys))
-
-def plot_IssueSpoilagePerDay(
-    pregeneratedData: list,
-    filename: str,
-):
-    figure: Figure = plt.figure()
-
-    plt.title("Number of Spoiled Issues Per Day")
-    plt.ylabel("Number of Issues")
-    plt.xlabel("Day")
-
-    data: list = pregeneratedData
-
-    keys = list()
-    values = list()
-    for day in pregeneratedData:
-        keys.append(day["day"])
-        values.append(day["number_open"])
-
-    plt.plot(keys, values)
-
-    shrink_graph(keys=keys)
-
-    figure.savefig(filename)
-
-    return exists(filename)
-
-
-def plot_OpenIssuesPerDay_Line(
-    pregeneratedData: dict = None,
-    filename: str = "open_issues_per_day_line.png",
-):
-    figure: Figure = plt.figure()
-
-    plt.title("Number of Open Issues Per Day")
-    plt.ylabel("Number of Issues")
-    plt.xlabel("Day")
-
-    data: dict = pregeneratedData
-
-    plt.plot(data.keys(), data.values())
-    shrink_graph(keys=data.keys())
-    figure.savefig(filename)
-
-    return exists(filename)
-
-
-def plot_ClosedIssuesPerDay_Line(
-    pregeneratedData: dict = None,
-    filename: str = "closed_issues_per_day_line.png",
-):
-    figure: Figure = plt.figure()
-
-    plt.title("Number of Closed Issues Per Day")
-    plt.ylabel("Number of Issues")
-    plt.xlabel("Day")
-
-    data: dict = pregeneratedData
-
-    x_values = [int(i) for i in data.keys()]
-    y_values = [int(i) for i in data.values()]
-    # z = derivative(x_values, y_values)
-    # p = np.poly1d(z)
-    plt.plot(data.keys(), data.values(), color="blue", label="discrete")
-    # plt.plot(x_values, p(x_values), color="red", label="continuous")
-
-    shrink_graph(keys=data.keys())
-    # plt.legend()
-    figure.savefig(filename)
-
-    return exists(filename)
-
-
-def plot_OpenClosedIssuesPerDay_Line(
-    pregeneratedData_OpenIssues: dict = None,
-    pregeneratedData_ClosedIssues: dict = None,
-    filename: str = "open_closed_issues_per_day_line.png",
-):
-    figure: Figure = plt.figure()
-
-    plt.title("Number of Issues Per Day")
-    plt.ylabel("Number of Issues")
-    plt.xlabel("Day")
-
-    openData: dict = pregeneratedData_OpenIssues
-    closedData: dict = pregeneratedData_ClosedIssues
-
-    plt.plot(openData.keys(), openData.values(), color="blue", label="Open Issues")
-    plt.plot(closedData.keys(), closedData.values(), color="red", label="Closed Issues")
-    plt.legend()
-    shrink_graph(keys=openData.keys())
-    shrink_graph(keys=closedData.keys())
-    shrink_graph(keys=keys)
->>>>>>> main
     figure.savefig(filename)
     figure.clf()
 
 
-<<<<<<< HEAD
 def plot(
     x: list,
     y: list,
@@ -387,25 +154,6 @@ def plot(
         filename=filename,
     )
     return (x, y)
-=======
-    with MoonSpinner(
-        f'Getting the total number of "{key} = {value}" issues per day... '
-    ) as pb:
-        for x in range(minKeyValue, maxKeyValue):
-            try:
-                data[x] = dictionary[x]
-            except KeyError:
-                count = 0
-                interval: IntervalTree
-                for interval in tree.at(x):
-                    if interval.data[key] == value:
-                        count += 1
-                data[x] = count
-
-            pb.next()
-
-    return data
->>>>>>> main
 
 # def derivative(
 #     x_values=None,
