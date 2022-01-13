@@ -134,3 +134,4 @@ dmypy.json
 *.pdf
 .idea
 !.zenodo.json
+.idea
