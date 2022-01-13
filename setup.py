@@ -53,7 +53,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.github_issues:main",
+            "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.main:main",
             "ssl-metrics-github-issues-graph = ssl_metrics_github_issues.create_graph:main",
         ]
     },
