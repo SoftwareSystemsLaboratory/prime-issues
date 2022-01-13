@@ -1,6 +1,8 @@
-from argparse import Namespace, ArgumentParser
-from requests import Response, get
+from argparse import ArgumentParser, Namespace
+
 from progress.bar import Bar
+from requests import Response, get
+
 from libs.common import getLastPage, storeJSON
 
 
@@ -64,6 +66,7 @@ def getArguements() -> Namespace:
     #     help="",
     # )
     return parser.parse_args()
+
 
 def getGitHubIssues(
     repo: str,
