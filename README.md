@@ -25,8 +25,6 @@ The graphs can be saved as a `.png`, `.pdf`, or any compatible format that `matp
 
 #### From pip
 
-### From pip
-
 1. Install `Python 3.9.6 +`
 2. (Recommended) Create a *virtual environment* with `python3.9 -m venv env` and *activate* it
 3. Run `pip install ssl-metrics-github-issues`
