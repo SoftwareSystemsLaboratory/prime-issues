@@ -3,7 +3,7 @@ from argparse import ArgumentParser, Namespace
 from progress.bar import Bar
 from requests import Response, get
 
-from libs.common import getLastPage, storeJSON
+from ssl_metrics_github_issues.common import getLastPage, storeJSON
 
 
 def getArguements() -> Namespace:
