@@ -42,6 +42,7 @@ def getArguements() -> Namespace:
         usage="Access the GitHub issues of a repository via the GitHub Issues REST API",
         description="",
     )
+
     issuesParser.add_argument(
         "-p",
         "--pull-request",
