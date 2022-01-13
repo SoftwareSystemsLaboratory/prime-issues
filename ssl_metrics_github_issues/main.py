@@ -3,7 +3,7 @@ from argparse import ArgumentParser, Namespace
 from progress.bar import Bar
 from requests import Response, get
 
-from ssl_metrics_github_issues.common import getLastPage, storeJSON
+from common import getLastPage, storeJSON
 
 
 def getArguements() -> Namespace:
@@ -46,8 +46,8 @@ def getArguements() -> Namespace:
         "-p",
         "--pull-request",
         help="Flag to enable the collection of pull requests with the other data",
-        type=bool,
         required=False,
+        action="store_true",
         default=False,
     )
 
@@ -135,12 +135,12 @@ def main() -> None:
     issues: list = getGitHubIssues(
         repo=args.repository,
         token=args.token,
-        pullRequests=args.pull_requests,
+        pullRequests=args.pull_request,
     )
 
     storeJSON(
         json=issues,
-        filename=args.save_json,
+        filename=args.save_json[0],
     )
 
 
