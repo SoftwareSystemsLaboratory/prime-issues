@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 
-from ssl_metrics_git_commits_loc.polynomialMath import findBestFitLine
+from ssl_metrics_github_issues.polynomialMath import findBestFitLine
 
 
 def graph(

@@ -1,5 +1,5 @@
-numpy
 matplotlib
+numpy
 pandas
 progress
 requests
