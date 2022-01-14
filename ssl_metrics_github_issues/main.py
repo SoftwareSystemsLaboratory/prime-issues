@@ -1,9 +1,15 @@
 from argparse import ArgumentParser, Namespace
 
+import pandas
+
+from pandas import DataFrame
 from progress.bar import Bar
 from requests import Response, get
+from requests.models import CaseInsensitiveDict
 
-from ssl_metrics_github_issues.common import getLastPage, storeJSON
+from dateutil.parser import parse
+
+from common import storeJSON
 
 
 def getArguements() -> Namespace:
@@ -12,8 +18,15 @@ def getArguements() -> Namespace:
         usage="Tool to access specific GitHub endpoints to extract data to be piped into other ssl-metrics applicaitons.",
         description="",
     )
-    subparser = parser.add_subparsers()
 
+    parser.add_argument(
+        "-p",
+        "--pull-request",
+        help="Flag to enable the collection of pull requests with the other data",
+        required=False,
+        action="store_true",
+        default=False,
+    )
     parser.add_argument(
         "-r",
         "--repository",
@@ -37,67 +50,98 @@ def getArguements() -> Namespace:
         required=True,
     )
 
-    issuesParser: ArgumentParser = subparser.add_parser(
-        "issues",
-        usage="Access the GitHub issues of a repository via the GitHub Issues REST API",
-        description="",
-    )
-
-    issuesParser.add_argument(
-        "-p",
-        "--pull-request",
-        help="Flag to enable the collection of pull requests with the other data",
-        required=False,
-        action="store_true",
-        default=False,
-    )
-
-    # issueCommentsParser: ArgumentParser = subparser.add_parser(
-    #     "comments",
-    #     title="",
-    #     description="",
-    #     required=False,
-    #     help="",
-    # )
-    # issueTimelineParser: ArgumentParser = subparser.add_parser(
-    #     "timeline",
-    #     title="",
-    #     description="",
-    #     required=False,
-    #     help="",
-    # )
     return parser.parse_args()
 
 
-def getGitHubIssues(
-    repo: str,
-    token: str,
-    pullRequests: bool = False,
-) -> int:
-
-    data: list = []
+def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "gh-all-issues",
         "Authorization": f"token {token}",
     }
-    urlTemplate: str = "https://api.github.com/repos/{}/issues?state=all&sort=created&direction=asc&per_page=100&page={}"
 
-    html: Response = get(url=urlTemplate.format(repo, 1), headers=requestHeaders)
+    apiURL: str = f"https://api.github.com/repos/{repo}/issues?state=all&sort=created&direction=asc&per_page=100&page={page}"
 
-    requestIterations: int = getLastPage(response=html)
+    return get(url=apiURL, headers=requestHeaders)
 
-    json: dict = html.json()
-    for index in range(len(json)):
-        if testIfPullRequest(json[index]) is False:
-            data.append(json[index])
+
+def getLastPageOfResponse(response: Response) -> int:
+    responseHeaders: CaseInsensitiveDict = response.headers
+    try:
+        links: str = responseHeaders["Link"]
+    except KeyError:
+        return 1
+
+    linksSplit: list = links.split(",")
+    lastLink: str = linksSplit[1]
+
+    lastPageIndex: int = lastLink.find("&page=") + 6
+    lastPageRightCaretIndex: int = lastLink.find(">;")
+
+    return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
+
+
+def extractDataFromPair(pair: dict, pullRequests: bool) ->  dict:
+    data: dict = {}
+
+    data["number"] = pair["number"]
+    data["created_at"] = pair["created_at"]
+    data["closed_at"] = pair["closed_at"]
+    data["openSinceDay0"] =
+
+    isPullRequest: bool = testIfPullRequest(dictionary=pair)
+
+    if pullRequests:
+        return data
+    elif (pullRequests == False) and isPullRequest:
+        return None
+    else:
+        return data
+
+def iterateAPI(
+    repo: str,
+    token: str,
+    pullRequests: bool = False,
+) -> DataFrame:
+
+    columnNames: list = ["number", "created_at", "closed_at"]
+    df: DataFrame = DataFrame(columns=columnNames)
+
+    print(f"Getting the first page of issues from {repo}")
+
+    response: Response = getIssueResponse(repo, token, page=1)
+    numberOfPagesOfIssues: int = getLastPageOfResponse(response)
 
     if pullRequests is False:
-        barStr: str = (
+        message: str = (
             f"Removing pull request issues and then storing issue data from {repo}... "
         )
     else:
-        barStr: str = f"Storing issue data from {repo}... "
+        message: str = f"Storing issue data from {repo}... "
+
+    with Bar(message, max=numberOfPagesOfIssues):
+        json: dict = response.json()
+
+        index: int
+        for index in range(len(json)):
+            df = df.append(extractDataFromPair(json[index], pullRequests), ignore_index=True)
+
+        df.to_json("test.json")
+        print(numberOfPagesOfIssues)
+        quit()
+
+
+    for index in range(len(json)):
+        if testIfPullRequest(json[index]) is False:
+            data: dict = {}
+
+            data["number"] = json[index]["number"]
+            data["openedSinceDay0"] = json[index]["created_at"]
+            data["closedSinceDay0"] = json[index]["created_at"]
+
+            df = df.append(data, ignore_index=True)
+            print(df)
+            quit()
 
     barMax: int = requestIterations
     with Bar(barStr, max=barMax) as bar:
@@ -105,21 +149,30 @@ def getGitHubIssues(
 
         if requestIterations != 1:
             for iteration in range(requestIterations + 1):
-
                 if iteration > 1:
                     apiCall: str = urlTemplate.format(repo, iteration)
                     html: Response = get(url=apiCall, headers=requestHeaders)
 
                     json: dict = html.json()
                     for index in range(len(json)):
+                        data: dict = {}
                         if pullRequests is False:
                             if testIfPullRequest(json[index]) is False:
-                                data.append(json[index])
+                                data = {
+                                    "number": json[index]["number"],
+                                    "createdAt": json[index]["created_at"],
+                                    "closedAt": json[index]["closed_at"],
+                                }
                         else:
-                            data.append(json[index])
+                            data = {
+                                "number": json[index]["number"],
+                                "createdAt": json[index]["created_at"],
+                                "closedAt": json[index]["closed_at"],
+                            }
+                        df.append(data, ignore_index=True)
 
                     bar.next()
-    return data
+    return df
 
 
 def testIfPullRequest(dictionary: dict) -> bool:
@@ -133,12 +186,14 @@ def testIfPullRequest(dictionary: dict) -> bool:
 def main() -> None:
     args: Namespace = getArguements()
 
-    issues: list = getGitHubIssues(
+    issues: list = iterateAPI(
         repo=args.repository,
         token=args.token,
         pullRequests=args.pull_request,
     )
 
+    print(issues)
+    quit()
     storeJSON(
         json=issues,
         filename=args.save_json[0],

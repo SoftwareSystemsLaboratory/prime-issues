@@ -36,13 +36,13 @@ def getArgparse() -> Namespace:
         required=True,
     )
     parser.add_argument(
-        "--loc", help="Utilize LOC data", required=False, action="store_true"
+        "--open", help="Utilize Open Issue data", required=False, action="store_true"
     )
     parser.add_argument(
-        "--dloc", help="Utilize Delta LOC data", required=False, action="store_true"
+        "--closed", help="Utilize Closed Issue data", required=False, action="store_true"
     )
     parser.add_argument(
-        "--kloc", help="Utilize KLOC data", required=False, action="store_true"
+        "--both", help="Utilize Both Open and Closed Issue data", required=False, action="store_true"
     )
     parser.add_argument(
         "--graph-data",
