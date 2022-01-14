@@ -1,15 +1,11 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
-from typing import Type
 
-import pandas
 from dateutil.parser import parse as dateParse
 from pandas import DataFrame
 from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
-
-from common import storeJSON
 
 
 def getArguements() -> Namespace:
