@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, Namespace
+from datetime import datetime
 
 import pandas
 
@@ -7,7 +8,7 @@ from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
-from dateutil.parser import parse
+from dateutil.parser import parse as dateParse
 
 from common import storeJSON
 
@@ -81,13 +82,16 @@ def getLastPageOfResponse(response: Response) -> int:
     return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
-def extractDataFromPair(pair: dict, pullRequests: bool) ->  dict:
+def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) ->  dict:
     data: dict = {}
 
     data["number"] = pair["number"]
     data["created_at"] = pair["created_at"]
     data["closed_at"] = pair["closed_at"]
-    data["openSinceDay0"] =
+    data["dayOpened"] = (dateParse(pair["created_at"]) - day0).days
+
+    # possible error here
+    data["dayClosed"] = (dateParse(pair["closed_at"]) - day0).days
 
     isPullRequest: bool = testIfPullRequest(dictionary=pair)
 
@@ -122,9 +126,13 @@ def iterateAPI(
     with Bar(message, max=numberOfPagesOfIssues):
         json: dict = response.json()
 
+        print(json[0]["created_at"])
+        input()
+        day0: datetime = dateParse(json[0]["created_at"])
+
         index: int
         for index in range(len(json)):
-            df = df.append(extractDataFromPair(json[index], pullRequests), ignore_index=True)
+            df = df.append(extractDataFromPair(json[index], pullRequests, day0), ignore_index=True)
 
         df.to_json("test.json")
         print(numberOfPagesOfIssues)
