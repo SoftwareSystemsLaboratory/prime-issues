@@ -42,7 +42,7 @@ def getArgparse() -> Namespace:
         "--closed", help="Utilize Closed Issue data", required=False, action="store_true"
     )
     parser.add_argument(
-        "--both", help="Utilize Both Open and Closed Issue data", required=False, action="store_true"
+        "--both", help="Utilize Both Opened and Closed data", required=False, action="store_true"
     )
     parser.add_argument(
         "--graph-data",
