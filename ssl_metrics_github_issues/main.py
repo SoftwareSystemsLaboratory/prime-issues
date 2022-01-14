@@ -1,14 +1,13 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
+from typing import Type
 
 import pandas
-
+from dateutil.parser import parse as dateParse
 from pandas import DataFrame
 from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
-
-from dateutil.parser import parse as dateParse
 
 from common import storeJSON
 
@@ -82,16 +81,21 @@ def getLastPageOfResponse(response: Response) -> int:
     return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
-def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) ->  dict:
+def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
     data: dict = {}
+    day0: datetime = day0.replace(tzinfo=None)
 
     data["number"] = pair["number"]
     data["created_at"] = pair["created_at"]
     data["closed_at"] = pair["closed_at"]
-    data["dayOpened"] = (dateParse(pair["created_at"]) - day0).days
+    data["dayOpened"] = (dateParse(pair["created_at"]).replace(tzinfo=None) - day0).days
 
-    # possible error here
-    data["dayClosed"] = (dateParse(pair["closed_at"]) - day0).days
+    try:
+        dayClosed: int = (dateParse(pair["closed_at"]).replace(tzinfo=None) - day0).days
+    except TypeError:
+        dayClosed: int = (datetime.now().replace(tzinfo=None) - day0).days
+
+    data["dayClosed"] = dayClosed
 
     isPullRequest: bool = testIfPullRequest(dictionary=pair)
 
@@ -102,16 +106,21 @@ def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) ->  dict
     else:
         return data
 
+
 def iterateAPI(
     repo: str,
     token: str,
     pullRequests: bool = False,
 ) -> DataFrame:
 
-    columnNames: list = ["number", "created_at", "closed_at"]
+    columnNames: list = [
+        "number",
+        "created_at",
+        "closed_at",
+        "dayOpened",
+        "dayClosed",
+    ]
     df: DataFrame = DataFrame(columns=columnNames)
-
-    print(f"Getting the first page of issues from {repo}")
 
     response: Response = getIssueResponse(repo, token, page=1)
     numberOfPagesOfIssues: int = getLastPageOfResponse(response)
@@ -123,63 +132,32 @@ def iterateAPI(
     else:
         message: str = f"Storing issue data from {repo}... "
 
-    with Bar(message, max=numberOfPagesOfIssues):
+    with Bar(message, max=numberOfPagesOfIssues) as bar:
         json: dict = response.json()
 
-        print(json[0]["created_at"])
-        input()
         day0: datetime = dateParse(json[0]["created_at"])
 
         index: int
         for index in range(len(json)):
-            df = df.append(extractDataFromPair(json[index], pullRequests, day0), ignore_index=True)
+            df = df.append(
+                extractDataFromPair(json[index], pullRequests, day0), ignore_index=True
+            )
 
-        df.to_json("test.json")
-        print(numberOfPagesOfIssues)
-        quit()
+        for page in range(numberOfPagesOfIssues):
+            if page == 1:
+                pass
 
+            response: Response = getIssueResponse(repo, token, page)
+            json = response.json()
 
-    for index in range(len(json)):
-        if testIfPullRequest(json[index]) is False:
-            data: dict = {}
+            index: int
+            for index in range(len(json)):
+                df = df.append(
+                    extractDataFromPair(json[index], pullRequests, day0),
+                    ignore_index=True,
+                )
+            bar.next()
 
-            data["number"] = json[index]["number"]
-            data["openedSinceDay0"] = json[index]["created_at"]
-            data["closedSinceDay0"] = json[index]["created_at"]
-
-            df = df.append(data, ignore_index=True)
-            print(df)
-            quit()
-
-    barMax: int = requestIterations
-    with Bar(barStr, max=barMax) as bar:
-        bar.next()
-
-        if requestIterations != 1:
-            for iteration in range(requestIterations + 1):
-                if iteration > 1:
-                    apiCall: str = urlTemplate.format(repo, iteration)
-                    html: Response = get(url=apiCall, headers=requestHeaders)
-
-                    json: dict = html.json()
-                    for index in range(len(json)):
-                        data: dict = {}
-                        if pullRequests is False:
-                            if testIfPullRequest(json[index]) is False:
-                                data = {
-                                    "number": json[index]["number"],
-                                    "createdAt": json[index]["created_at"],
-                                    "closedAt": json[index]["closed_at"],
-                                }
-                        else:
-                            data = {
-                                "number": json[index]["number"],
-                                "createdAt": json[index]["created_at"],
-                                "closedAt": json[index]["closed_at"],
-                            }
-                        df.append(data, ignore_index=True)
-
-                    bar.next()
     return df
 
 
@@ -194,18 +172,13 @@ def testIfPullRequest(dictionary: dict) -> bool:
 def main() -> None:
     args: Namespace = getArguements()
 
-    issues: list = iterateAPI(
+    issues: DataFrame = iterateAPI(
         repo=args.repository,
         token=args.token,
         pullRequests=args.pull_request,
     )
 
-    print(issues)
-    quit()
-    storeJSON(
-        json=issues,
-        filename=args.save_json[0],
-    )
+    issues.to_json(args.save_json[0])
 
 
 if __name__ == "__main__":
