@@ -1,37 +1,29 @@
-# SSL Metrics GitHub Issues
+# SSL Metrics GitHub Issues Extractor
 
 > Using the GitHub Issues REST API, provide insight into a specific GitHub repository issue tracker
 
-[![Publish to PyPi](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml/badge.svg)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/pypi.yml)
 
-## Table of Contents
-
-- [SSL Metrics GitHub Issues](#ssl-metrics-github-issues)
-  - [Table of Contents](#table-of-contents)
-  - [About](#about)
-  - [How to Run](#how-to-run)
-    - [Note on Command Line Arguments](#note-on-command-line-arguments)
-    - [From pip](#from-pip)
-    - [Command Line Arguments](#command-line-arguments)
-      - [ssl-metrics-github-issues-collect](#ssl-metrics-github-issues-collect)
-      - [ssl-metrics-github-issues-graph](#ssl-metrics-github-issues-graph)
-        - [Note on Graph Export Options](#note-on-graph-export-options)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5655424.svg)](https://doi.org/10.5281/zenodo.5655424) [![Release to PyPi, GitHub, and Zenodo](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/release.yml/badge.svg)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/release.yml)
 
 ## About
 
-This project is a proof of concept demonstration that **it is possible** to generate useful insights into a GitHub project via it's issue tracker.
+This is a proof of concept demonstrating that it is possible to use the GitHub REST API to extract Issues from a repository and graph various metrics from it.
 
-Currently, this project generates graphs of:
+This software extracts Issues since the project's conception a GitHub repository and stores it within a `.json` file.
 
-- Number of open issues against days
-- Number of closed issues against days
-- Comparison of number of open and closed issues against days
+This file can then be piped into a bundled graphing utility to graph the following:
+
+* Number of open issues against days
+* Number of closed issues against days
+* Comparison of number of open and closed issues against days
+
+The graphs can be saved as a `.png`, `.pdf`, or any compatible format that `matplotlib` supports.
 
 ## How to Run
 
-### Note on Command Line Arguments
+### Installation
 
-See [Command Line Arguments](#command-line-arguments) for program configuration from the command line
+#### From pip
 
 ### From pip
 
@@ -52,12 +44,14 @@ See [Command Line Arguments](#command-line-arguments) for program configuration 
 
 #### ssl-metrics-github-issues-graph
 
-##### Note on Graph Export Options
-
-Arguements `-c`, `-o`, and `-x` can be of any of the formats that `matplotlibs.pyplot.savefig` function exports to.
+TODO: Add export options
 
 - `-h`, `--help`: Shows the help menu and exits
 - `-c`, `--closed-issues-graph-filename`: The filename of the output graph of closed issues
 - `-i`, `--input`: The input JSON file that is to be used for graphing
 - `-o`, `--open-issues-graph-filename`: The filename of the output graph of open issues
 - `-x`, `--joint-issues-graph-filename`: The filename of the output graph of open and closed issues
+
+## Example Outputs
+
+TODO: Add outputs following this format [https://github.com/SoftwareSystemsLaboratory/ssl-metrics-git-commits-loc/blob/main/README.md#example-outputs](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-git-commits-loc/blob/main/README.md#example-outputs)

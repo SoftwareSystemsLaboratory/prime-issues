@@ -21,15 +21,25 @@ setup(
         "GitHub Repository": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues",
     },
     keywords=[
+        "api",
+        "commits",
+        "engineering",
         "git",
         "github",
-        "software engineering",
-        "metrics",
-        "software systems laboratory",
-        "ssl",
+        "issues",
         "loyola",
         "loyola university chicago",
         "luc",
+        "mining",
+        "metrics",
+        "repository",
+        "repository mining",
+        "simple",
+        "software",
+        "software engineering",
+        "software metrics",
+        "software systems laboratory",
+        "ssl",
     ],
     python_requires=">=3.9",
     install_requires=[
@@ -43,7 +53,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.github_issues:main",
+            "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.main:main",
             "ssl-metrics-github-issues-graph = ssl_metrics_github_issues.create_graph:main",
         ]
     },
