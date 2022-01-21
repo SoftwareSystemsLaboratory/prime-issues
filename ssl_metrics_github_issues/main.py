@@ -31,8 +31,8 @@ def getArguements() -> Namespace:
         required=True,
     )
     parser.add_argument(
-        "-s",
-        "--save-json",
+        "-o",
+        "--output",
         help="File to save JSON response(s) to",
         type=str,
         required=True,
