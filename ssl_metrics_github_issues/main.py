@@ -121,8 +121,11 @@ def iterateAPI(
         "number",
         "created_at",
         "closed_at",
-        "dayOpened",
-        "dayClosed",
+        "created_at_short",
+        "closed_at_short",
+        "day_opened",
+        "day_closed",
+        "pull_request"
     ]
     df: DataFrame = DataFrame(columns=columnNames)
 
