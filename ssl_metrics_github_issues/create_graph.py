@@ -42,9 +42,6 @@ def getArgparse() -> Namespace:
         "--closed", help="Utilize Closed Issue data", required=False, action="store_true"
     )
     parser.add_argument(
-        "--both", help="Utilize Both Opened and Closed data", required=False, action="store_true"
-    )
-    parser.add_argument(
         "--graph-data",
         help="Graph the raw data. Discrete graph of the data",
         required=False,
@@ -283,7 +280,7 @@ def main() -> None:
     df: DataFrame = pandas.read_json(args.input)
 
     t: str = (
-        lambda typeOfGraph, repositoryName, yUnits: f"{typeOfGraph}{repositoryName} {yUnits} / Every {args.stepper} Commits"
+        lambda typeOfGraph, repositoryName, yUnits: f"{typeOfGraph}{repositoryName} {yUnits} / Every {args.stepper} Issues"
     )
     x: list = lambda maxValue: [x for x in range(len(df["loc_sum"]))][
         args.x_min : maxValue : args.stepper
@@ -296,62 +293,60 @@ def main() -> None:
         xData: list = x(-1)
         yLOC: list = y("loc_sum", -1)
         yDLOC: list = y("delta_loc", -1)
-        yKLOC: list = y("kloc", -1)
     else:
         xData: list = x(args.x_max + 1)
         yLOC: list = y("loc_sum", args.x_max + 1)
         yDLOC: list = y("delta_loc", args.x_max + 1)
-        yKLOC: list = y("kloc", args.x_max + 1)
 
-    if args.loc:
+    if args.open:
         if args.graph_data:
-            title: str = t("", args.repository_name, "LOC")
-            filename: str = appendID(filename=args.output, id="loc_data")
+            title: str = t("", args.repository_name, "Open Issues")
+            filename: str = appendID(filename=args.output, id="open_issues")
             _graphDataChart(
                 title=title,
-                yLabel=yLabel0.format("LOC"),
+                yLabel=yLabel0.format("Open Issues"),
                 yData=yLOC,
                 filename=filename,
             )
 
         if args.graph_best_fit:
-            title: str = t("Best Fit of ", args.repository_name, "LOC")
-            filename: str = appendID(filename=args.output, id="loc_best_fit")
+            title: str = t("Best Fit of ", args.repository_name, "Open Issues")
+            filename: str = appendID(filename=args.output, id="open_issues_best_fit")
             _graphBestFitChart(
                 title=title,
-                yLabel=yLabel0.format("LOC"),
+                yLabel=yLabel0.format("Open Issues"),
                 yData=yLOC,
                 filename=filename,
             )
 
         if args.graph_velocity:
-            title: str = t("Velocity of ", args.repository_name, "LOC")
-            filename: str = appendID(filename=args.output, id="loc_velocity")
+            title: str = t("Velocity of ", args.repository_name, "Open Issues")
+            filename: str = appendID(filename=args.output, id="open_issues_velocity")
             _graphVelocityChart(
                 title=title,
-                yLabel=yLabel1.format("LOC"),
+                yLabel=yLabel1.format("Open Issues"),
                 yData=yLOC,
                 filename=filename,
             )
 
         if args.graph_acceleration:
-            title: str = t("Acceleration of ", args.repository_name, "LOC")
-            filename: str = appendID(filename=args.output, id="loc_acceleration")
+            title: str = t("Acceleration of ", args.repository_name, "Open Issues")
+            filename: str = appendID(filename=args.output, id="open_issues_acceleration")
             _graphAccelerationChart(
                 title=title,
-                yLabel=yLabel2.format("LOC"),
+                yLabel=yLabel2.format("Open Issues"),
                 yData=yLOC,
                 filename=filename,
             )
 
         if args.graph_all:
-            filename: str = appendID(filename=args.output, id="loc_all")
-            title = t("", args.repository_name, "LOC")
+            filename: str = appendID(filename=args.output, id="open_issues_all")
+            title = t("", args.repository_name, "Open Issues")
             yLabelList: list = [
-                yLabel0.format("LOC"),
-                yLabel0.format("LOC"),
-                yLabel1.format("LOC"),
-                yLabel2.format("LOC"),
+                yLabel0.format("Open Issues"),
+                yLabel0.format("Open Issues"),
+                yLabel1.format("Open Issues"),
+                yLabel2.format("Open Issues"),
             ]
             _graphAllCharts(
                 title=title,
@@ -360,55 +355,55 @@ def main() -> None:
                 filename=filename,
             )
 
-    if args.dloc:
+    if args.closed:
         if args.graph_data:
-            title: str = t("", args.repository_name, "DLOC")
-            filename: str = appendID(filename=args.output, id="dloc_data")
+            title: str = t("", args.repository_name, "Closed Issues")
+            filename: str = appendID(filename=args.output, id="closed_issues_data")
             _graphDataChart(
                 title=title,
-                yLabel=yLabel0.format("DLOC"),
+                yLabel=yLabel0.format("Closed Issues"),
                 yData=yDLOC,
                 filename=filename,
             )
 
         if args.graph_best_fit:
-            title: str = t("Best Fit of ", args.repository_name, "DLOC")
-            filename: str = appendID(filename=args.output, id="dloc_best_fit")
+            title: str = t("Best Fit of ", args.repository_name, "Closed Issues")
+            filename: str = appendID(filename=args.output, id="closed_issues_best_fit")
             _graphBestFitChart(
                 title=title,
-                yLabel=yLabel0.format("DLOC"),
+                yLabel=yLabel0.format("Closed Issues"),
                 yData=yDLOC,
                 filename=filename,
             )
 
         if args.graph_velocity:
-            title: str = t("Velocity of ", args.repository_name, "DLOC")
-            filename: str = appendID(filename=args.output, id="dloc_velocity")
+            title: str = t("Velocity of ", args.repository_name, "Closed Issues")
+            filename: str = appendID(filename=args.output, id="closed_issues_velocity")
             _graphVelocityChart(
                 title=title,
-                yLabel=yLabel1.format("DLOC"),
+                yLabel=yLabel1.format("Closed Issues"),
                 yData=yDLOC,
                 filename=filename,
             )
 
         if args.graph_acceleration:
-            title: str = t("Acceleration of ", args.repository_name, "DLOC")
-            filename: str = appendID(filename=args.output, id="dloc_acceleration")
+            title: str = t("Acceleration of ", args.repository_name, "Closed Issues")
+            filename: str = appendID(filename=args.output, id="closed_issues_acceleration")
             _graphAccelerationChart(
                 title=title,
-                yLabel=yLabel2.format("DLOC"),
+                yLabel=yLabel2.format("Closed Issues"),
                 yData=yDLOC,
                 filename=filename,
             )
 
         if args.graph_all:
-            title: str = t("", args.repository_name, "DLOC")
-            filename: str = appendID(filename=args.output, id="dloc_all")
+            title: str = t("", args.repository_name, "Closed Issues")
+            filename: str = appendID(filename=args.output, id="closed_issues_all")
             yLabelList: list = [
-                yLabel0.format("DLOC"),
-                yLabel0.format("DLOC"),
-                yLabel1.format("DLOC"),
-                yLabel2.format("DLOC"),
+                yLabel0.format("Closed Issues"),
+                yLabel0.format("Closed Issues"),
+                yLabel1.format("Closed Issues"),
+                yLabel2.format("Closed Issues"),
             ]
             _graphAllCharts(
                 title=title,
@@ -416,77 +411,6 @@ def main() -> None:
                 yData=yDLOC,
                 filename=filename,
             )
-
-    if args.kloc:
-        if args.graph_data:
-            title: str = t("", args.repository_name, "KLOC")
-            filename: str = appendID(filename=args.output, id="kloc_data")
-            _graphDataChart(
-                title=title,
-                yLabel=yLabel0.format("KLOC"),
-                filename=filename,
-            )
-
-        if args.graph_best_fit:
-            title: str = t(
-                "Best Fit of ",
-                args.repository_name,
-                "KLOC",
-            )
-            filename: str = appendID(filename=args.output, id="kloc_best_fit")
-            _graphBestFitChart(
-                title=title,
-                yLabel=yLabel0.format("KLOC"),
-                yData=yKLOC,
-                filename=filename,
-            )
-
-        if args.graph_velocity:
-            title: str = t(
-                "Velocity of ",
-                args.repository_name,
-                "KLOC",
-            )
-            filename: str = appendID(filename=args.output, id="kloc_velocity")
-            _graphVelocityChart(
-                title=title,
-                yLabel=yLabel1.format("KLOC"),
-                yData=yKLOC,
-                filename=filename,
-            )
-
-        if args.graph_acceleration:
-            title: str = t("", args.repository_name, "KLOC")
-            filename: str = appendID(filename=args.output, id="kloc_acceleration")
-            title = title.format(
-                "Acceleration of ",
-                args.repository_name,
-                "KLOC",
-                args.stepper,
-            )
-            _graphAccelerationChart(
-                title=title,
-                yLabel=yLabel2.format("KLOC"),
-                yData=yKLOC,
-                filename=filename,
-            )
-
-        if args.graph_all:
-            title: str = t("", args.repository_name, "KLOC")
-            filename: str = appendID(filename=args.output, id="kloc_all")
-            yLabelList: list = [
-                yLabel0.format("KLOC"),
-                yLabel0.format("KLOC"),
-                yLabel1.format("KLOC"),
-                yLabel2.format("KLOC"),
-            ]
-            _graphAllCharts(
-                title=title,
-                yLabelList=yLabelList,
-                yData=yKLOC,
-                filename=filename,
-            )
-
 
 if __name__ == "__main__":
     main()
