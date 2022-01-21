@@ -39,7 +39,10 @@ def getArgparse() -> Namespace:
         "--open", help="Utilize Open Issue data", required=False, action="store_true"
     )
     parser.add_argument(
-        "--closed", help="Utilize Closed Issue data", required=False, action="store_true"
+        "--closed",
+        help="Utilize Closed Issue data",
+        required=False,
+        action="store_true",
     )
     parser.add_argument(
         "--graph-data",
@@ -170,7 +173,9 @@ def graphChart(
 
 
 def main() -> None:
-    def _graphDataChart(title: str, yLabel: str, yData: list, filename: str) -> None:
+    def _graphDataChart(
+        title: str, yLabel: str, yData: list, xData: list, filename: str
+    ) -> None:
         graphChart(
             figureType="data",
             title=title,
@@ -181,7 +186,9 @@ def main() -> None:
             filename=filename,
         )
 
-    def _graphBestFitChart(title: str, yLabel: str, yData: list, filename: str) -> None:
+    def _graphBestFitChart(
+        title: str, yLabel: str, yData: list, xData: list, filename: str
+    ) -> None:
         graphChart(
             figureType="best_fit",
             title=title,
@@ -194,7 +201,7 @@ def main() -> None:
         )
 
     def _graphVelocityChart(
-        title: str, yLabel: str, yData: list, filename: str
+        title: str, yLabel: str, yData: list, xData: list, filename: str
     ) -> None:
         graphChart(
             figureType="velocity",
@@ -208,7 +215,7 @@ def main() -> None:
         )
 
     def _graphAccelerationChart(
-        title: str, yLabel: str, yData: list, filename: str
+        title: str, yLabel: str, yData: list, xData: list, filename: str
     ) -> None:
         graphChart(
             figureType="acceleration",
@@ -222,7 +229,7 @@ def main() -> None:
         )
 
     def _graphAllCharts(
-        title: str, yLabelList: list, yData: list, filename: str
+        title: str, yLabelList: list, yData: list, xData: list, filename: str
     ) -> None:
         graphChart(
             figureType="all",
@@ -259,9 +266,9 @@ def main() -> None:
         print("The stepper is too small. Stepper >= 1")
         quit(4)
 
-    if (args.loc is False) and (args.dloc is False) and (args.kloc is False):
-        print("No data option choosen. Defaulting to --loc")
-        args.loc = True
+    if (args.open is False) and (args.closed is False):
+        print("No data option choosen. Defaulting to --open")
+        args.open = True
     if (
         (args.graph_data is False)
         and (args.graph_best_fit is False)
@@ -272,7 +279,7 @@ def main() -> None:
         print("No graph option choosen. Defaulting to --graph-all")
         args.graph_all = True
 
-    xLabel: str = f"Every {args.stepper} Commit(s)"
+    xLabel: str = f"Every {args.stepper} Issue(s)"
     yLabel0: str = "{}"
     yLabel1: str = "d/dx {}"
     yLabel2: str = "d^2/dx^2 {}"
@@ -282,21 +289,31 @@ def main() -> None:
     t: str = (
         lambda typeOfGraph, repositoryName, yUnits: f"{typeOfGraph}{repositoryName} {yUnits} / Every {args.stepper} Issues"
     )
-    x: list = lambda maxValue: [x for x in range(len(df["loc_sum"]))][
+
+    xOpen: list = lambda maxValue: df["day_opened"].unique()[
         args.x_min : maxValue : args.stepper
     ]
-    y: list = lambda column, maxValue: df[column].tolist()[
+    xClosed: list = lambda maxValue: df["day_closed"].unique()[
         args.x_min : maxValue : args.stepper
     ]
 
+    yOpen: list = lambda maxValue: df.pivot_table(
+        columns=["day_opened"], aggfunc="size"
+    ).to_list()[args.x_min : maxValue : args.stepper]
+    yClosed: list = lambda maxValue: df.pivot_table(
+        columns=["day_closed"], aggfunc="size"
+    ).to_list()[args.x_min : maxValue : args.stepper]
+
     if args.x_max <= -1:
-        xData: list = x(-1)
-        yLOC: list = y("loc_sum", -1)
-        yDLOC: list = y("delta_loc", -1)
+        xOpenData: list = xOpen(-1)
+        xClosedData: list = xClosed(-1)
+        yOpenData: list = yOpen(-1)
+        yClosedData: list = yClosed(-1)
     else:
-        xData: list = x(args.x_max + 1)
-        yLOC: list = y("loc_sum", args.x_max + 1)
-        yDLOC: list = y("delta_loc", args.x_max + 1)
+        xOpenData: list = xOpen(args.x_max + 1)
+        xClosedData: list = xClosed(args.x_max + 1)
+        yOpenData: list = yOpen(args.x_max + 1)
+        yClosedData: list = yClosed(args.x_max + 1)
 
     if args.open:
         if args.graph_data:
@@ -305,7 +322,8 @@ def main() -> None:
             _graphDataChart(
                 title=title,
                 yLabel=yLabel0.format("Open Issues"),
-                yData=yLOC,
+                yData=yOpenData,
+                xData=xOpenData,
                 filename=filename,
             )
 
@@ -315,7 +333,8 @@ def main() -> None:
             _graphBestFitChart(
                 title=title,
                 yLabel=yLabel0.format("Open Issues"),
-                yData=yLOC,
+                yData=yOpenData,
+                xData=xOpenData,
                 filename=filename,
             )
 
@@ -325,17 +344,21 @@ def main() -> None:
             _graphVelocityChart(
                 title=title,
                 yLabel=yLabel1.format("Open Issues"),
-                yData=yLOC,
+                yData=yOpenData,
+                xData=xOpenData,
                 filename=filename,
             )
 
         if args.graph_acceleration:
             title: str = t("Acceleration of ", args.repository_name, "Open Issues")
-            filename: str = appendID(filename=args.output, id="open_issues_acceleration")
+            filename: str = appendID(
+                filename=args.output, id="open_issues_acceleration"
+            )
             _graphAccelerationChart(
                 title=title,
                 yLabel=yLabel2.format("Open Issues"),
-                yData=yLOC,
+                yData=yOpenData,
+                xData=xOpenData,
                 filename=filename,
             )
 
@@ -351,7 +374,8 @@ def main() -> None:
             _graphAllCharts(
                 title=title,
                 yLabelList=yLabelList,
-                yData=yLOC,
+                yData=yOpenData,
+                xData=xOpenData,
                 filename=filename,
             )
 
@@ -362,7 +386,8 @@ def main() -> None:
             _graphDataChart(
                 title=title,
                 yLabel=yLabel0.format("Closed Issues"),
-                yData=yDLOC,
+                yData=yClosedData,
+                xData=xClosedData,
                 filename=filename,
             )
 
@@ -372,7 +397,8 @@ def main() -> None:
             _graphBestFitChart(
                 title=title,
                 yLabel=yLabel0.format("Closed Issues"),
-                yData=yDLOC,
+                yData=yClosedData,
+                xData=xClosedData,
                 filename=filename,
             )
 
@@ -382,17 +408,21 @@ def main() -> None:
             _graphVelocityChart(
                 title=title,
                 yLabel=yLabel1.format("Closed Issues"),
-                yData=yDLOC,
+                yData=yClosedData,
+                xData=xClosedData,
                 filename=filename,
             )
 
         if args.graph_acceleration:
             title: str = t("Acceleration of ", args.repository_name, "Closed Issues")
-            filename: str = appendID(filename=args.output, id="closed_issues_acceleration")
+            filename: str = appendID(
+                filename=args.output, id="closed_issues_acceleration"
+            )
             _graphAccelerationChart(
                 title=title,
                 yLabel=yLabel2.format("Closed Issues"),
-                yData=yDLOC,
+                yData=yClosedData,
+                xData=xClosedData,
                 filename=filename,
             )
 
@@ -408,9 +438,11 @@ def main() -> None:
             _graphAllCharts(
                 title=title,
                 yLabelList=yLabelList,
-                yData=yDLOC,
+                yData=yClosedData,
+                xData=xClosedData,
                 filename=filename,
             )
+
 
 if __name__ == "__main__":
     main()

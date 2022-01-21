@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
+from typing import Type
 
 from dateutil.parser import parse as dateParse
 from pandas import DataFrame
@@ -84,16 +85,23 @@ def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
     data["number"] = pair["number"]
     data["created_at"] = pair["created_at"]
     data["closed_at"] = pair["closed_at"]
-    data["dayOpened"] = (dateParse(pair["created_at"]).replace(tzinfo=None) - day0).days
+    data["day_opened"] = (dateParse(pair["created_at"]).replace(tzinfo=None) - day0).days
+    data["created_at_short"] = dateParse(pair["created_at"]).replace(tzinfo=None).strftime("%Y-%m-%d")
+
+    try:
+        data["closed_at_short"] = dateParse(pair["closed_at"]).replace(tzinfo=None).strftime("%Y-%m-%d")
+    except TypeError:
+        data["closed_at_short"] = datetime.now().replace(tzinfo=None).strftime("%Y-%m-%d")
 
     try:
         dayClosed: int = (dateParse(pair["closed_at"]).replace(tzinfo=None) - day0).days
     except TypeError:
         dayClosed: int = (datetime.now().replace(tzinfo=None) - day0).days
 
-    data["dayClosed"] = dayClosed
+    data["day_closed"] = dayClosed
 
     isPullRequest: bool = testIfPullRequest(dictionary=pair)
+    data["pull_request"] = isPullRequest
 
     if pullRequests:
         return data
@@ -174,7 +182,7 @@ def main() -> None:
         pullRequests=args.pull_request,
     )
 
-    issues.to_json(args.save_json[0])
+    issues.to_json(args.output[0])
 
 
 if __name__ == "__main__":
