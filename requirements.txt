@@ -1,6 +1,7 @@
-numpy
 matplotlib
+numpy
 pandas
 progress
+python-dateutil
 requests
 scikit-learn
