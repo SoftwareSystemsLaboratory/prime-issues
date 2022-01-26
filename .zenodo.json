@@ -1,6 +1,6 @@
 {
     "upload_type": "software",
-    "title": "SoftwareSystemsLaboratory/ssl-metrics-github-issues",
+    "title": "SoftwareSystemsLaboratory/ssl-metrics-git-commits-loc",
     "creators": [
         {
         "name": "Synovic, Nicholas",
@@ -13,17 +13,19 @@
         "orcid": "0000-0002-0452-5571"
         }
     ],
-    "description": "This is a proof of concept demonstrating that it is possible to use GitHub to extract various issues data from a repository and graph various metrics from it.",
+    "description": "This is a proof of concept demonstrating that it is possible to use the GitHub REST API to extract issues from a repository.",
     "access_right": "open",
     "license": "BSD-3-Clause",
     "prereserve_doi": true,
     "keywords": [
-        "api",
+        "bus factor",
         "commits",
         "engineering",
         "git",
         "github",
+        "issue density",
         "issues",
+        "kloc",
         "loyola",
         "loyola university chicago",
         "luc",
