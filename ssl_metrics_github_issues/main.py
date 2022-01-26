@@ -81,7 +81,7 @@ def getLastPageOfResponse(response: Response) -> int:
 def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
     data: dict = {}
     day0: datetime = day0.replace(tzinfo=None)
-
+    data["state"] = pair["state"]
     data["number"] = pair["number"]
     data["created_at"] = pair["created_at"]
     data["closed_at"] = pair["closed_at"]
@@ -125,7 +125,8 @@ def iterateAPI(
         "closed_at_short",
         "day_opened",
         "day_closed",
-        "pull_request"
+        "pull_request",
+        "state,"
     ]
     df: DataFrame = DataFrame(columns=columnNames)
 
