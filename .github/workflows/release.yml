@@ -1,4 +1,4 @@
-name: Release to PyPi, GitHub, and Zenodo
+name: Release Project
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
       - main
     tags:
       - '*'
-  workflow_dispatch:
 
 jobs:
   build:
