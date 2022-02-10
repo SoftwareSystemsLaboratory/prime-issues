@@ -197,7 +197,7 @@ def main() -> None:
         pullRequests=args.pull_request,
     )
 
-    issues.T.to_json(args.output[0])
+    issues.to_json(args.output[0])
 
 
 if __name__ == "__main__":
