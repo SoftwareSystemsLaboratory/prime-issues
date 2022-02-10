@@ -1,17 +1,7 @@
 {
     "upload_type": "software",
-    "title": "SoftwareSystemsLaboratory/ssl-metrics",
+    "title": "SoftwareSystemsLaboratory/ssl-metrics-github-issues",
     "creators": [
-        {
-        "name": "Hyatt, Matt",
-        "affiliation": "Loyola University Chicago",
-        "orcid": "0000-0002-6356-6832"
-        },
-        {
-        "name": "Kuhl, Amy",
-        "affiliation": "Loyola University Chicago",
-        "orcid": "0000-0001-7586-7408"
-        },
         {
         "name": "Palmer, Jake",
         "affiliation": "Loyola University Chicago",
@@ -23,19 +13,9 @@
         "orcid": "0000-0002-9587-3722"
         },
         {
-        "name": "Stoneman, Ethan",
-        "affiliation": "Loyola University Chicago",
-        "orcid": "0000-0001-7702-8261"
-        },
-        {
         "name": "Synovic, Nicholas",
         "affiliation": "Loyola University Chicago",
         "orcid": "0000-0003-0413-4594"
-        },
-        {
-        "name": "Thota, Sohini",
-        "affiliation": "Loyola University Chicago",
-        "orcid": "0000-0002-3496-8867"
         },
         {
         "name": "Thiruvathukal, George K.",
