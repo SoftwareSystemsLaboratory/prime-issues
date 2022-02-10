@@ -3,8 +3,8 @@
 > A `python` tool to collect GitHub issues
 
 ![[https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue](https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue)](https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue)
-[![DOI](https://zenodo.org/badge/407346377.svg)](https://zenodo.org/badge/latestdoi/407346377)
-[![Release Project](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-git-bus-factor/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-git-bus-factor/actions/workflows/release.yml)
+[![DOI](https://zenodo.org/badge/402158914.svg)](https://zenodo.org/badge/latestdoi/402158914)
+[![Release Project](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-git-github-issues/actions/workflows/release.yml)
 ![[https://img.shields.io/badge/license-BSD--3-yellow](https://img.shields.io/badge/license-BSD--3-yellow)](https://img.shields.io/badge/license-BSD--3-yellow)
 
 ## Table of Contents
