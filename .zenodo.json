@@ -23,7 +23,7 @@
         "orcid": "0000-0002-0452-5571"
         }
     ],
-    "description": "A helper package to install all Software Systems Laboratory Metrics tools",
+    "description": "a python tool that lets users download/ collect issues from a GitHub repository",
     "access_right": "open",
     "license": "BSD-3-Clause",
     "prereserve_doi": true,

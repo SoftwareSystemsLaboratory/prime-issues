@@ -1,6 +1,6 @@
 # Software Systems Laboratory Metrics GitHub Issues Collector
 
-> A `python` tool to collect GitHub issues
+> A `python` tool that lets users download/ collect issues from a GitHub repository
 
 ![[https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue](https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue)](https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue)
 [![DOI](https://zenodo.org/badge/402158914.svg)](https://zenodo.org/badge/latestdoi/402158914)
