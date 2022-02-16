@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- given-names: George
+  family-names: Thiruvathukal
+  email: gkt@cs.luc.edu
+  affiliation: Loyola University Chicago
+  orcid: 'https://orcid.org/0000-0002-0452-5571'
+- given-names: Nicholas
+  family-names: Synovic
+  email: nsynovic@luc.edu
+  affiliation: Loyola University Chicago
+  orcid: 'https://orcid.org/0000-0003-0413-4594'
+  
+title: "SoftwareSystemsLaboratory/ssl-metrics-github-issues"
+version: 0.7.1
+doi: 10.5281/zenodo.5907140
+date-released: 2022-01-26
+url: "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues"
