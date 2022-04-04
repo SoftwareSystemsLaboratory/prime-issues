@@ -118,9 +118,7 @@ def iterateAPI(
 
         index: int
         for index in range(len(json)):
-            df = df.append(
-                extractDataFromPair(json[index], pullRequests, day0), ignore_index=True
-            )
+                        df.loc[len(df.index)] = extractDataFromPair(json[index], pullRequests, day0)
 
         for page in range(numberOfPagesOfIssues):
             if page == 1:
@@ -131,10 +129,7 @@ def iterateAPI(
 
             index: int
             for index in range(len(json)):
-                df = df.append(
-                    extractDataFromPair(json[index], pullRequests, day0),
-                    ignore_index=True,
-                )
+                            df.loc[len(df.index)] = extractDataFromPair(json[index], pullRequests, day0)
             bar.next()
 
     return df
@@ -157,8 +152,8 @@ def main() -> None:
         pullRequests=args.pull_request,
     )
 
-    issues.to_json(args.output[0])
-
+    issues.T.to_json(args.output)
+    print(args.output)
 
 if __name__ == "__main__":
     main()

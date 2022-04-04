@@ -59,18 +59,18 @@ def graphArgs() -> Namespace:
     parser.add_argument(
         "-i",
         "--input",
-        help=f"JSON export from {name} Git Commit Exploder. DEFAULT: ./commits_loc.json",
+        help=f"JSON export from {name} Git Commit Exploder. DEFAULT: ./github_issues.json",
         type=str,
         required=False,
-        default="commits_loc.json",
+        default="github_issues.json",
     )
     parser.add_argument(
         "-o",
         "--output",
-        help="Filename of the graph. DEFAULT: ./commits_loc.pdf",
+        help="Filename of the graph. DEFAULT: ./github_issues.pdf",
         type=str,
         required=False,
-        default="commits_loc.pdf",
+        default="github_issues.pdf",
     )
     parser.add_argument(
         "-x",
