@@ -8,7 +8,7 @@ authors: list = [
 ]
 
 
-def mainArgs() -> Namespace:
+def githubArgs() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog=f"{name} GitHub Issues Downloader",
         description="A tool to download all issues from a GitHub hosted repository",
