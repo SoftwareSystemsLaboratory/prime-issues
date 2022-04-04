@@ -8,7 +8,7 @@ from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
 from ssl_metrics_github_issues.args import mainArgs
-
+import re
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
@@ -23,19 +23,13 @@ def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
 
 
 def getLastPageOfResponse(response: Response) -> int:
-    responseHeaders: CaseInsensitiveDict = response.headers
+    headers: CaseInsensitiveDict = response.headers
     try:
-        links: str = responseHeaders["Link"]
+        lastPageString: str = headers["Link"].split(",")[-1].split("&")[4]
     except KeyError:
         return 1
+    return int(re.search(r'\d+', lastPageString).group())
 
-    linksSplit: list = links.split(",")
-    lastLink: str = linksSplit[1]
-
-    lastPageIndex: int = lastLink.find("&page=") + 6
-    lastPageRightCaretIndex: int = lastLink.find(">;")
-
-    return int(lastLink[lastPageIndex:lastPageRightCaretIndex])
 
 
 def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
