@@ -10,7 +10,6 @@ from ssl_metrics_github_issues.args import graphArgs
 def computeXY(
     df: DataFrame,
     xKey: str,
-    yKey: str,
     yThousandth: bool,
 ) -> tuple:
     xData: set = df[xKey].unique().tolist()
@@ -60,7 +59,7 @@ def main() -> None:
     df: DataFrame = pandas.read_json(args.input).T
 
     data: tuple = computeXY(
-        df=df, xKey=args.x, yKey=args.y, yThousandth=args.y_thousandths
+        df=df, xKey=args.x, yThousandth=args.y_thousandths
     )
     plot(
         x=data[0],
