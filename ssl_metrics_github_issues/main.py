@@ -1,3 +1,4 @@
+import re
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
@@ -8,7 +9,7 @@ from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
 from ssl_metrics_github_issues.args import mainArgs
-import re
+
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
@@ -28,8 +29,7 @@ def getLastPageOfResponse(response: Response) -> int:
         lastPageString: str = headers["Link"].split(",")[-1].split("&")[4]
     except KeyError:
         return 1
-    return int(re.search(r'\d+', lastPageString).group())
-
+    return int(re.search(r"\d+", lastPageString).group())
 
 
 def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
@@ -112,7 +112,7 @@ def iterateAPI(
 
         index: int
         for index in range(len(json)):
-                        df.loc[len(df.index)] = extractDataFromPair(json[index], pullRequests, day0)
+            df.loc[len(df.index)] = extractDataFromPair(json[index], pullRequests, day0)
 
         for page in range(numberOfPagesOfIssues):
             if page == 1:
@@ -123,7 +123,9 @@ def iterateAPI(
 
             index: int
             for index in range(len(json)):
-                            df.loc[len(df.index)] = extractDataFromPair(json[index], pullRequests, day0)
+                df.loc[len(df.index)] = extractDataFromPair(
+                    json[index], pullRequests, day0
+                )
             bar.next()
 
     return df
@@ -148,6 +150,7 @@ def main() -> None:
 
     issues.T.to_json(args.output)
     print(args.output)
+
 
 if __name__ == "__main__":
     main()
