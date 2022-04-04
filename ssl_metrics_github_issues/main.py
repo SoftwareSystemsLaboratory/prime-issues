@@ -1,7 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
-import pandas
 from dateutil.parser import parse as dateParse
 from pandas import DataFrame
 from progress.bar import Bar
@@ -37,7 +36,6 @@ def getArguements() -> Namespace:
         help="File to save JSON response(s) to",
         type=str,
         required=True,
-        nargs=1,
     )
     parser.add_argument(
         "-t",
