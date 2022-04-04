@@ -33,7 +33,7 @@ def getPageCount(response: Response) -> int:
 
 
 def iterateAPI(repo: str, token: str) -> list:
-    with Bar("Determining number of pages of issues...", max=pageCount + 1) as bar:
+    with Bar("Determining number of pages of issues...", max=100) as bar:
         resp: Response = getIssueResponse(repo, token, page=1)
         pageCount: int = getPageCount(resp)
         json: list = resp.json()
