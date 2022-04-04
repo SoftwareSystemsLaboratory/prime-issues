@@ -33,7 +33,7 @@ def mainArgs() -> Namespace:
     parser.add_argument(
         "-o",
         "--output",
-        help="File to save JSON response(s) to",
+        help="File to save JSON response(s) to. DEFAULT: ./github_issues.json",
         type=str,
         required=False,
         default="github_issues.json",
