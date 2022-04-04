@@ -36,7 +36,7 @@ def iterateAPI(repo: str, token: str) -> list:
         pageCount: int = getPageCount(resp)
         json: list = resp.json()
 
-        bar.message = "Downloading GitHub issues..."
+        bar.message = "Downloading Gitlab issues..."
         bar.max = pageCount
         bar.update()
         bar.next()
