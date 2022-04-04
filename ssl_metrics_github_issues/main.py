@@ -59,6 +59,7 @@ def computeValues(data: list) -> list:
         x["opened_day_since_0"] = (
             dateParse(x["created_at"]).replace(tzinfo=None) - day0
         ).days
+
         try:
             x["closed_day_since_0"] = (
                 dateParse(x["closed_at"]).replace(tzinfo=None) - day0
