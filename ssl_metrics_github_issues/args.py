@@ -119,7 +119,7 @@ def graphArgs() -> Namespace:
         help="Filepath of matplotlib stylesheet to use. DEFAULT: style.mplstyle. NOTE: This is an internal stylesheet used by the program and doesn't need to be specified/ created by you the user (you)",
         type=str,
         required=False,
-        default="style.mplstyle",
+        default="./style.mplstyle",
     )
 
     return parser.parse_args()
