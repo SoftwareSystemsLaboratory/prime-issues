@@ -7,46 +7,7 @@ from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
-
-def getArguements() -> Namespace:
-    parser: ArgumentParser = ArgumentParser(
-        prog="GitHub API Client",
-        usage="Tool to access specific GitHub endpoints to extract data to be piped into other ssl-metrics applicaitons.",
-        description="",
-    )
-
-    parser.add_argument(
-        "-p",
-        "--pull-request",
-        help="Flag to enable the collection of pull requests with the other data",
-        required=False,
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
-        "-r",
-        "--repository",
-        help="GitHub formatted as repository owner/repository",
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        help="File to save JSON response(s) to",
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
-        "-t",
-        "--token",
-        help="GitHub personal access token",
-        type=str,
-        required=True,
-    )
-
-    return parser.parse_args()
-
+from ssl_metrics_github_issues.args import mainArgs
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
@@ -187,7 +148,7 @@ def testIfPullRequest(dictionary: dict) -> bool:
 
 
 def main() -> None:
-    args: Namespace = getArguements()
+    args: Namespace = mainArgs()
 
     issues: DataFrame = iterateAPI(
         repo=args.repository,
