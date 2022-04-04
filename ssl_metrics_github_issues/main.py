@@ -23,7 +23,7 @@ def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     return get(url=apiURL, headers=requestHeaders)
 
 
-def getPagecount(response: Response) -> int:
+def getPageCount(response: Response) -> int:
     headers: CaseInsensitiveDict = response.headers
     try:
         lastPageString: str = headers["Link"].split(",")[-1].split("&")[4]
@@ -32,124 +32,46 @@ def getPagecount(response: Response) -> int:
     return int(re.search(r"\d+", lastPageString).group())
 
 
-def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
-    data: dict = {}
-    day0: datetime = day0.replace(tzinfo=None)
-    data["state"] = pair["state"]
-    data["number"] = pair["number"]
-    data["title"] = pair["title"]
-    data["description"] = pair["body"]
+def iterateAPI(repo: str, token: str) -> list:
+    resp: Response = getIssueResponse(repo, token, page=1)
+    pageCount: int = getPageCount(resp)
+    json: list = resp.json()
 
-    data["created_at"] = pair["created_at"]
-    data["closed_at"] = pair["closed_at"]
-    data["opened_day_since_0"] = (
-        dateParse(pair["created_at"]).replace(tzinfo=None) - day0
-    ).days
-    data["created_at_short"] = (
-        dateParse(pair["created_at"]).replace(tzinfo=None).strftime("%Y-%m-%d")
-    )
+    for page in range(2, pageCount + 1):
+        resp: Response = getIssueResponse(repo, token, page)
+        json.extend(resp.json())
 
-    try:
-        data["closed_at_short"] = (
-            dateParse(pair["closed_at"]).replace(tzinfo=None).strftime("%Y-%m-%d")
-        )
-    except TypeError:
-        data["closed_at_short"] = (
-            datetime.now().replace(tzinfo=None).strftime("%Y-%m-%d")
-        )
-
-    try:
-        dayClosed: int = (dateParse(pair["closed_at"]).replace(tzinfo=None) - day0).days
-    except TypeError:
-        dayClosed: int = (datetime.now().replace(tzinfo=None) - day0).days
-
-    data["closed_day_since_0"] = dayClosed
-
-    isPullRequest: bool = testIfPullRequest(dictionary=pair)
-    data["pull_request"] = isPullRequest
-
-    if pullRequests:
-        return data
-    elif (pullRequests == False) and isPullRequest:
-        return None
-    else:
-        return data
+    return json
 
 
-def iterateAPI(
-    repo: str,
-    token: str,
-    pullRequests: bool = False,
-) -> DataFrame:
+def computeValues(data: list) -> list:
+    day0: datetime = dateParse(data[0]["created_at"]).replace(tzinfo=None)
 
-    columnNames: list = [
-        "number",
-        "created_at",
-        "closed_at",
-        "created_at_short",
-        "closed_at_short",
-        "opened_day_since_0",
-        "closed_day_since_0",
-        "pull_request",
-        "state,",
-    ]
-    df: DataFrame = DataFrame(columns=columnNames)
+    x: dict
+    for x in data:
+        x["opened_day_since_0"] = (
+            dateParse(x["created_at"]).replace(tzinfo=None) - day0
+        ).days
+        try:
+            x["closed_day_since_0"] = (
+                dateParse(x["closed_at"]).replace(tzinfo=None) - day0
+            ).days
+        except TypeError:
+            x["closed_day_since_0"] = (datetime.now().replace(tzinfo=None) - day0).days
 
-    response: Response = getIssueResponse(repo, token, page=1)
-    numberOfPagesOfIssues: int = getPagecount(response)
-
-    if pullRequests is False:
-        message: str = (
-            f"Removing pull request issues and then storing issue data from {repo}... "
-        )
-    else:
-        message: str = f"Storing issue data from {repo}... "
-
-    with Bar(message, max=numberOfPagesOfIssues) as bar:
-        json: dict = response.json()
-
-        day0: datetime = dateParse(json[0]["created_at"])
-
-        index: int
-        for index in range(len(json)):
-            df.loc[len(df.index)] = extractDataFromPair(json[index], pullRequests, day0)
-
-        for page in range(numberOfPagesOfIssues):
-            if page == 1:
-                pass
-
-            response: Response = getIssueResponse(repo, token, page)
-            json = response.json()
-
-            index: int
-            for index in range(len(json)):
-                df.loc[len(df.index)] = extractDataFromPair(
-                    json[index], pullRequests, day0
-                )
-            bar.next()
-
-    return df
-
-
-def testIfPullRequest(dictionary: dict) -> bool:
-    try:
-        dictionary["pull_request"]
-        return True
-    except KeyError:
-        return False
+    return data
 
 
 def main() -> None:
     args: Namespace = mainArgs()
 
-    issues: DataFrame = iterateAPI(
-        repo=args.repository,
-        token=args.token,
-        pullRequests=args.pull_request,
-    )
+    raw: list = iterateAPI(repo=args.repository, token=args.token)
+    data: list = computeValues(raw)
 
-    issues.T.to_json(args.output)
-    print(args.output)
+    if args.pull_request == False:
+        data = [x for x in data if x.get("pull_request") is None]
+
+    data.T.to_json(args.output)
 
 
 if __name__ == "__main__":
