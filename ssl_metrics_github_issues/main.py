@@ -1,5 +1,5 @@
 import re
-from argparse import ArgumentParser, Namespace
+from argparse import Namespace
 from datetime import datetime
 
 from dateutil.parser import parse as dateParse
@@ -71,7 +71,8 @@ def main() -> None:
     if args.pull_request == False:
         data = [x for x in data if x.get("pull_request") is None]
 
-    data.T.to_json(args.output)
+    df: DataFrame = DataFrame(data)
+    df.T.to_json(args.output)
 
 
 if __name__ == "__main__":
