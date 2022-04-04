@@ -49,6 +49,39 @@ def githubArgs() -> Namespace:
     return parser.parse_args()
 
 
+def gitlabArgs() -> Namespace:
+    parser: ArgumentParser = ArgumentParser(
+        prog=f"{name} Gitlab Issues Downloader",
+        description="A tool to download all issues from a Gitlab hosted repository",
+        epilog=f"Author(s): {', '.join(authors)}",
+    )
+
+    parser.add_argument(
+        "-r",
+        "--repository",
+        help="Gitlab repository ID",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="File to save JSON response(s) to. DEFAULT: ./gitlab_issues.json",
+        type=str,
+        required=False,
+        default="gitlab_issues.json",
+    )
+    parser.add_argument(
+        "-t",
+        "--token",
+        help="Gitlab personal access token",
+        type=str,
+        required=True,
+    )
+
+    return parser.parse_args()
+
+
 def graphArgs() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog=f"{name} GitHub Issues Grapher",

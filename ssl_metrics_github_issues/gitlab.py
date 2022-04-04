@@ -1,3 +1,4 @@
+from argparse import Namespace
 import re
 from datetime import datetime
 
@@ -5,6 +6,8 @@ from dateutil.parser import parse as dateParse
 from pandas import DataFrame
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
+
+from ssl_metrics_github_issues.args import gitlabArgs
 
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
@@ -57,11 +60,13 @@ def computeValues(data: list) -> list:
 
 
 def main() -> None:
-    raw: list = iterateAPI(repo="31598236", token="")
+    args: Namespace = gitlabArgs()
+
+    raw: list = iterateAPI(repo=args.repository, token=args.token)
     data: list = computeValues(raw)
     df: DataFrame = DataFrame(data)
 
-    df.T.to_json("gitlab_issues.json")
+    df.T.to_json(args.output)
 
 
 if __name__ == "__main__":
