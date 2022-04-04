@@ -26,6 +26,18 @@ def getPageCount(response: Response) -> int:
     return int(re.search(r"\d+", lastPageString).group())
 
 
+def iterateAPI(repo: str, token: str) -> list:
+    resp: Response = getIssueResponse(repo, token, page=1)
+    pageCount: int = getPageCount(resp)
+    json: list = resp.json()
+
+    for page in range(2, pageCount + 1):
+        resp: Response = getIssueResponse(repo, token, page)
+        json.extend(resp.json())
+
+    return json
+
+
 def computeValues(data: list) -> list:
     day0: datetime = dateParse(data[0]["created_at"]).replace(tzinfo=None)
 
@@ -44,25 +56,12 @@ def computeValues(data: list) -> list:
     return data
 
 
-def iterateAPI(repo: str, token: str) -> DataFrame:
-    resp: Response = getIssueResponse(repo, token, page=1)
-    pageCount: int = getPageCount(resp)
-    json: list = resp.json()
-
-    for page in range(2, pageCount + 1):
-        resp: Response = getIssueResponse(repo, token, page)
-        json.extend(resp.json())
-
-    data: list = computeValues(json)
-
-    return DataFrame(data)
-
-
 def main() -> None:
-    df: DataFrame = iterateAPI(repo="31598236", token="")
-    df.T.to_json("gitlab.json")
+    raw: list = iterateAPI(repo="31598236", token="")
+    data: list = computeValues(raw)
+    df: DataFrame = DataFrame(data)
 
-    quit()
+    df.T.to_json("gitlab_issues.json")
 
 
 if __name__ == "__main__":

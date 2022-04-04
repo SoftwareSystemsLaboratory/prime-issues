@@ -8,7 +8,7 @@ from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
-from ssl_metrics_github_issues.args import mainArgs
+from ssl_metrics_github_issues.args import githubArgs
 
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
@@ -71,7 +71,7 @@ def computeValues(data: list) -> list:
 
 
 def main() -> None:
-    args: Namespace = mainArgs()
+    args: Namespace = githubArgs()
 
     raw: list = iterateAPI(repo=args.repository, token=args.token)
     data: list = computeValues(raw)
