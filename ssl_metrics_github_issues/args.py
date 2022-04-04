@@ -4,7 +4,7 @@ name: str = "CLIME"
 authors: list = [
     "Nicholas M. Synovic",
     "Jake Palmer",
-    "Rohan Sethi" "George K. Thiruvathukal",
+    "Rohan Sethi", "George K. Thiruvathukal",
 ]
 
 
@@ -52,7 +52,7 @@ def mainArgs() -> Namespace:
 def graphArgs() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog=f"{name} Git Commit LOC Exploder Grapher",
-        description=f"A tool for graphing LOC information from the output of the {name} Commit LOC Exploder",
+        description=f"A tool for graphing GitHub issue information from the output of the {name} GitHub Issues Downloader",
         epilog=f"Author(s): {', '.join(authors)}",
     )
 
@@ -74,17 +74,10 @@ def graphArgs() -> Namespace:
     )
     parser.add_argument(
         "-x",
-        help="Key of the x values to use for graphing. DEFAULT: author_days_since_0",
+        help="Key of the x values to use for graphing. DEFAULT: day_opened",
         type=str,
         required=False,
         default="author_days_since_0",
-    )
-    parser.add_argument(
-        "-y",
-        help="Key of the y values to use for graphing. DEFAULT: lines_of_code",
-        type=str,
-        required=False,
-        default="lines_of_code",
     )
     parser.add_argument(
         "--y-thousandths",

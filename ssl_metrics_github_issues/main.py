@@ -48,7 +48,7 @@ def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
 
     data["created_at"] = pair["created_at"]
     data["closed_at"] = pair["closed_at"]
-    data["day_opened"] = (
+    data["opened_day_since_0"] = (
         dateParse(pair["created_at"]).replace(tzinfo=None) - day0
     ).days
     data["created_at_short"] = (
@@ -69,7 +69,7 @@ def extractDataFromPair(pair: dict, pullRequests: bool, day0: datetime) -> dict:
     except TypeError:
         dayClosed: int = (datetime.now().replace(tzinfo=None) - day0).days
 
-    data["day_closed"] = dayClosed
+    data["closed_day_since_0"] = dayClosed
 
     isPullRequest: bool = testIfPullRequest(dictionary=pair)
     data["pull_request"] = isPullRequest
@@ -94,8 +94,8 @@ def iterateAPI(
         "closed_at",
         "created_at_short",
         "closed_at_short",
-        "day_opened",
-        "day_closed",
+        "opened_day_since_0",
+        "closed_day_since_0",
         "pull_request",
         "state,",
     ]
