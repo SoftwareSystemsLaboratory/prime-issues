@@ -1,7 +1,11 @@
 from argparse import ArgumentParser, Namespace
 
 name: str = "CLIME"
-authors: list = ["Nicholas M. Synovic", "Jake Palmer", "Rohan Sethi" "George K. Thiruvathukal"]
+authors: list = [
+    "Nicholas M. Synovic",
+    "Jake Palmer",
+    "Rohan Sethi" "George K. Thiruvathukal",
+]
 
 
 def mainArgs() -> Namespace:
@@ -32,7 +36,7 @@ def mainArgs() -> Namespace:
         help="File to save JSON response(s) to",
         type=str,
         required=False,
-        default="github_issues.json"
+        default="github_issues.json",
     )
     parser.add_argument(
         "-t",

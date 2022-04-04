@@ -9,6 +9,7 @@ from requests.models import CaseInsensitiveDict
 
 from ssl_metrics_github_issues.args import mainArgs
 
+
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
         "Accept": "application/vnd.github.v3+json",
