@@ -23,7 +23,7 @@ def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     return get(url=apiURL, headers=requestHeaders)
 
 
-def getLastPageOfResponse(response: Response) -> int:
+def getPagecount(response: Response) -> int:
     headers: CaseInsensitiveDict = response.headers
     try:
         lastPageString: str = headers["Link"].split(",")[-1].split("&")[4]
@@ -96,7 +96,7 @@ def iterateAPI(
     df: DataFrame = DataFrame(columns=columnNames)
 
     response: Response = getIssueResponse(repo, token, page=1)
-    numberOfPagesOfIssues: int = getLastPageOfResponse(response)
+    numberOfPagesOfIssues: int = getPagecount(response)
 
     if pullRequests is False:
         message: str = (
