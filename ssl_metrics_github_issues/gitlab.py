@@ -59,7 +59,7 @@ def iterateAPI(repo: str, token: str) -> DataFrame:
 
 
 def main() -> None:
-    df: DataFrame = iterateAPI(repo="31598236", token="glpat-9W2a5CUryB2_wdu2ruk3")
+    df: DataFrame = iterateAPI(repo="31598236", token="")
     df.T.to_json("gitlab.json")
 
     quit()
