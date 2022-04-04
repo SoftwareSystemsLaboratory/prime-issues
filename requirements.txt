@@ -3,6 +3,5 @@ numpy
 pandas
 progress
 python-dateutil
-python-gitlab
 requests
 scikit-learn
