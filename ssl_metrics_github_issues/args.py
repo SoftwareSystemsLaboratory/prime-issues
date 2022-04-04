@@ -51,7 +51,7 @@ def mainArgs() -> Namespace:
 
 def graphArgs() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
-        prog=f"{name} Git Commit LOC Exploder Grapher",
+        prog=f"{name} GitHub Issues Grapher",
         description=f"A tool for graphing GitHub issue information from the output of the {name} GitHub Issues Downloader",
         epilog=f"Author(s): {', '.join(authors)}",
     )
@@ -59,7 +59,7 @@ def graphArgs() -> Namespace:
     parser.add_argument(
         "-i",
         "--input",
-        help=f"JSON export from {name} Git Commit Exploder. DEFAULT: ./github_issues.json",
+        help=f"JSON export from {name} GitHub Issues Downloader. DEFAULT: ./github_issues.json",
         type=str,
         required=False,
         default="github_issues.json",
@@ -74,10 +74,10 @@ def graphArgs() -> Namespace:
     )
     parser.add_argument(
         "-x",
-        help="Key of the x values to use for graphing. DEFAULT: day_opened",
+        help="Key of the x values to use for graphing. DEFAULT: opened_day_since_0",
         type=str,
         required=False,
-        default="author_days_since_0",
+        default="opened_day_since_0",
     )
     parser.add_argument(
         "--y-thousandths",

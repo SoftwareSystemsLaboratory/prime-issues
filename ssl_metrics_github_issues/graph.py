@@ -19,10 +19,10 @@ def computeXY(
 
     if yThousandth:
         for day in xData:
-            yData.append(df.loc[df[xKey] == day, yKey].sum() / 1000)
+            yData.append(df.loc[df[xKey] == day].count() / 1000)
     else:
         for day in xData:
-            yData.append(df.loc[df[xKey] == day, yKey].sum())
+            yData.append(df.loc[df[xKey] == day].count())
     return (xData, yData)
 
 
