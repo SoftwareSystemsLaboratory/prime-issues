@@ -119,7 +119,7 @@ def graphArgs() -> Namespace:
         help='Filepath of matplotlib stylesheet to use. DEFAULT: ""',
         type=str,
         required=False,
-        default=None,
+        default="",
     )
 
     return parser.parse_args()
