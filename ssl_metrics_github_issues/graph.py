@@ -18,10 +18,10 @@ def computeXY(
 
     if yThousandth:
         for day in xData:
-            yData.append(df.groupby(day).count() / 1000)
+            yData.append(df.loc[df[xKey] == day].shape[0] / 1000)
     else:
         for day in xData:
-            yData.append(df.groupby(day).count())
+            yData.append(df.loc[df[xKey] == day].shape[0])
 
     return (xData, yData)
 
