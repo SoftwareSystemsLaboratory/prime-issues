@@ -18,10 +18,11 @@ def computeXY(
 
     if yThousandth:
         for day in xData:
-            yData.append(df.loc[df[xKey] == day].count() / 1000)
+            yData.append(df.groupby(day).count() / 1000)
     else:
         for day in xData:
-            yData.append(df.loc[df[xKey] == day].count())
+            yData.append(df.groupby(day).count())
+
     return (xData, yData)
 
 
@@ -37,7 +38,8 @@ def plot(
 ) -> None:
     "param: type can only be one of the following: line, bar"
 
-    plt.style.use(stylesheet)
+    if stylesheet is not None:
+        plt.style.use(stylesheet)
 
     if type == "line":
         plt.plot(x, y)
