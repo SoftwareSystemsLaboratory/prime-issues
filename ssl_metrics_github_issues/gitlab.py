@@ -1,5 +1,5 @@
-from argparse import Namespace
 import re
+from argparse import Namespace
 from datetime import datetime
 
 from dateutil.parser import parse as dateParse

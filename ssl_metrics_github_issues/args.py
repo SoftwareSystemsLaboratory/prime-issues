@@ -4,7 +4,8 @@ name: str = "CLIME"
 authors: list = [
     "Nicholas M. Synovic",
     "Jake Palmer",
-    "Rohan Sethi", "George K. Thiruvathukal",
+    "Rohan Sethi",
+    "George K. Thiruvathukal",
 ]
 
 

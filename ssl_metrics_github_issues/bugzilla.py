@@ -1,13 +1,15 @@
 import pandas
 from pandas import DataFrame
-from requests import Response, get
 from progress.bar import Bar
+from requests import Response, get
+
 
 def getIssueResponse(url: str, bug: int) -> Response:
     apiURL: str = f"{url}/rest/bug/{bug}"
     return get(url=apiURL)
 
-def main()  ->  None:
+
+def main() -> None:
     df: DataFrame = pandas.read_csv("bugs.csv")
     bugIDs: list = df["Bug ID"].tolist()
 
@@ -22,8 +24,6 @@ def main()  ->  None:
 
     data: DataFrame = DataFrame(json)
     data.to_json("bugzilla_issues.json")
-
-
 
 
 if __name__ == "__main__":
