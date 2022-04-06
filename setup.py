@@ -55,6 +55,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
+            "ssl-metrics-bugzilla-issues-collect = ssl_metrics_github_issues.bugzilla:main",
             "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.github:main",
             "ssl-metrics-gitlab-issues-collect = ssl_metrics_github_issues.gitlab:main",
             "ssl-metrics-github-issues-graph = ssl_metrics_github_issues.graph:main",
