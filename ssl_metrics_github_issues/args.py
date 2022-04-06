@@ -9,6 +9,41 @@ authors: list = [
 ]
 
 
+def bugzillaArgs() -> Namespace:
+    parser: ArgumentParser = ArgumentParser(
+        prog=f"{name} Bugzilla Issues Downloader (BETA)",
+        description="A tool to download all issues from a Bugzilla hosted issue tracker",
+        epilog=f"Author(s): {', '.join(authors)}",
+    )
+
+    parser.add_argument(
+        "-u",
+        "--url",
+        help="Bugzilla repository root url. DEFAULT: https://bugzilla.kernal.org. NOTE: Structure the URL exactly like the DEFAULT or else this will not work.",
+        type=str,
+        required=True,
+        default="https://bugzilla.kernal.org",
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="CSV file of exported Bugzilla bugs. DEFAULT: ./bugzilla_issues.csv",
+        type=str,
+        required=False,
+        default="bugzilla_issues.csv",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="File to save JSON response(s) to. DEFAULT: ./bugzilla_issues.json",
+        type=str,
+        required=False,
+        default="bugzilla_issues.json",
+    )
+
+    return parser.parse_args()
+
+
 def githubArgs() -> Namespace:
     parser: ArgumentParser = ArgumentParser(
         prog=f"{name} GitHub Issues Downloader",
