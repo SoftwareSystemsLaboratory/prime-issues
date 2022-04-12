@@ -1,0 +1,6 @@
+figure.figsize: 6.4, 1.6
+font.family: serif
+font.size: 8
+savefig.bbox: tight
+savefig.pad_inches: 0
+savefig.transparent: True
