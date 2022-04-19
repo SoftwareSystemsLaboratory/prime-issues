@@ -121,6 +121,13 @@ def gitlabArgs() -> Namespace:
         type=str,
         required=True,
     )
+    parser.add_argument(
+        "--log",
+        help="File to store logs in. DEFAULT: gitlab_issues.log",
+        type=str,
+        required=False,
+        default="gitlab_issues.log",
+    )
 
     return parser.parse_args()
 

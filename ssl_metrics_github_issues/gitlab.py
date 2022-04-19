@@ -1,3 +1,4 @@
+import logging
 import re
 from argparse import Namespace
 from datetime import datetime
@@ -17,7 +18,7 @@ def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     }
 
     apiURL: str = f"https://gitlab.com/api/v4/projects/{repo}/issues?scope=all&order_by=created_at&sort=asc&per_page=100&page={page}"
-
+    logging.debug(f"API endpoint URL: {apiURL}")
     return get(url=apiURL, headers=requestHeaders)
 
 
@@ -25,32 +26,43 @@ def getPageCount(response: Response) -> int:
     headers: CaseInsensitiveDict = response.headers
     try:
         lastPageString: str = headers["link"].split(",")[-1].split("&")[2]
+        pageCount: int = int(re.search(r"\d+", lastPageString).group())
     except KeyError:
-        return 1
-    return int(re.search(r"\d+", lastPageString).group())
+        pageCount: int = 1
+        logging.info(f"Number of pages of issues: {pageCount}")
+    return pageCount
 
 
 def iterateAPI(repo: str, token: str) -> list:
+    logging.debug("Starting to iterate through issue pages...\n")
     with Bar("Determining number of pages of issues...", max=100) as bar:
+        logging.info("Iteration 0")
         resp: Response = getIssueResponse(repo, token, page=1)
         pageCount: int = getPageCount(resp)
         json: list = resp.json()
-
+        logging.debug(f"JSON data:\n{json}")
         bar.message = "Downloading Gitlab issues..."
         bar.max = pageCount
         bar.update()
+        logging.info("Finished iteration 0\n")
         bar.next()
 
         for page in range(2, pageCount + 1):
+            logging.info(f"Iteration {page}")
             resp: Response = getIssueResponse(repo, token, page)
             json.extend(resp.json())
+            logging.info(f"Finished iteration {page}\n")
             bar.next()
 
     return json
 
 
 def computeValues(data: list) -> list:
-    day0: datetime = dateParse(data[0]["created_at"]).replace(tzinfo=None)
+    try:
+        day0: datetime = dateParse(data[0]["created_at"]).replace(tzinfo=None)
+    except IndexError:
+        logging.error(f"Invalid JSON formatting. Potentially no JSON data.\n{data}")
+        quit(1)
 
     x: dict
     for x in data:
