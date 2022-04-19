@@ -1,3 +1,4 @@
+from ast import Index
 import re
 from argparse import Namespace
 from datetime import datetime
@@ -52,7 +53,10 @@ def iterateAPI(repo: str, token: str) -> list:
 
 
 def computeValues(data: list) -> list:
-    day0: datetime = dateParse(data[0]["created_at"]).replace(tzinfo=None)
+    try:
+        day0: datetime = dateParse(data[0]["created_at"]).replace(tzinfo=None)
+    except IndexError:
+        return {"opened_day_since_0": 0, "closed_day_since_0": 0}
 
     x: dict
     for x in data:
@@ -78,6 +82,8 @@ def main() -> None:
 
     if args.pull_request == False:
         data = [x for x in data if x.get("pull_request") is None]
+
+    print(data)
 
     df: DataFrame = DataFrame(data)
     df.T.to_json(args.output)
