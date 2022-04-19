@@ -81,6 +81,13 @@ def githubArgs() -> Namespace:
         type=str,
         required=True,
     )
+    parser.add_argument(
+        "--log",
+        help="File to store logs in. DEFAULT: github_issues.log",
+        type=str,
+        required=False,
+        default="github_issues.log",
+    )
 
     return parser.parse_args()
 
