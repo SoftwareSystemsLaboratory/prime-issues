@@ -40,7 +40,13 @@ def bugzillaArgs() -> Namespace:
         required=False,
         default="bugzilla_issues.json",
     )
-
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="Display version of the tool",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -88,7 +94,13 @@ def githubArgs() -> Namespace:
         required=False,
         default="github_issues.log",
     )
-
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="Display version of the tool",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -128,7 +140,13 @@ def gitlabArgs() -> Namespace:
         required=False,
         default="gitlab_issues.log",
     )
-
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="Display version of the tool",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
 
 
@@ -204,5 +222,11 @@ def graphArgs() -> Namespace:
         required=False,
         default="",
     )
-
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="Display version of the tool",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args()
