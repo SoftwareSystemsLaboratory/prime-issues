@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- given-names: George
+  family-names: Thiruvathukal
+  email: gkt@cs.luc.edu
+  affiliation: Loyola University Chicago
+  orcid: 'https://orcid.org/0000-0002-0452-5571'
+- given-names: Jacob
+  family-names: Palmer
+  email: jpalmer3@luc.edu
+  affiliation: Loyola University Chicago
+  orcid: 'https://orcid.org/0000-0003-4586-5369'
+- orcid: 'https://orcid.org/0000-0002-9587-3722'
+  given-names: Rohan
+  family-names: Sethi
+  email: rsethi@luc.edu
+  affiliation: Loyola University Chicago
+ given-names: Nicholas
+  family-names: Synovic
+  email: nsynovic@luc.edu
+  affiliation: Loyola University Chicago
+  orcid: 'https://orcid.org/0000-0003-0413-4594'
+
+title: "SoftwareSystemsLaboratory/clime-issues"
+version: 0.3
+doi:
+date-released: 2022-02-09
+url: "https://github.com/SoftwareSystemsLaboratory/clime-issues"
