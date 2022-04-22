@@ -1,15 +1,15 @@
 from setuptools import setup
 
-from ssl_metrics_github_issues import version
+from clime_issues import version
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="ssl-metrics-github-issues",
-    packages=["ssl_metrics_github_issues"],
+    name="clime-issues",
+    packages=["clime_issues"],
     version=version.version(),
-    description="SSL Metrics - GitHub Issues Analysis",
+    description="CLIME - Issues",
     author="Software and Systems Laboratory - Loyola University Chicago",
     author_email="ssl-metrics@ssl.luc.edu",
     license="BSD",
@@ -17,37 +17,57 @@ setup(
     long_description_content_type="text/markdown",
     url="https://ssl.cs.luc.edu/projects/metricsDashboard",
     project_urls={
-        "Bug Tracker": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/issues",
-        "GitHub Repository": "https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues",
+        "Bug Tracker": "https://github.com/SoftwareSystemsLaboratory/clime-issues/issues",
+        "GitHub Repository": "https://github.com/SoftwareSystemsLaboratory/clime-issues",
     },
     keywords=[
+        "bugzilla",
         "bus factor",
+        "bus factor",
+        "cloc",
         "commits",
+        "commits",
+        "delta lines of code",
         "engineering",
         "git",
+        "git",
         "github",
+        "github",
+        "gitlab",
+        "installable",
         "issue density",
+        "issue density",
+        "issue spoilage",
+        "issues",
         "issues",
         "kloc",
-        "loyola",
+        "lines of code",
+        "longitudinal graphs",
         "loyola university chicago",
+        "loyola",
         "luc",
-        "mining",
         "metrics",
-        "repository",
+        "metrics",
+        "mining",
+        "productivity",
+        "python",
         "repository mining",
+        "repository",
         "simple",
-        "software",
+        "sloccount",
         "software engineering",
         "software metrics",
         "software systems laboratory",
-        "ssl"
+        "software",
+        "ssl",
+        "thousands of lines of code",
+        "tool",
+        "vcs"
     ],
     python_requires=">=3.9",
     install_requires=[
-        "intervaltree",
-        "numpy",
         "matplotlib",
+        "numpy",
         "pandas",
         "progress",
         "python-dateutil",
@@ -55,10 +75,10 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "ssl-metrics-bugzilla-issues-collect = ssl_metrics_github_issues.bugzilla:main",
-            "ssl-metrics-github-issues-collect = ssl_metrics_github_issues.github:main",
-            "ssl-metrics-gitlab-issues-collect = ssl_metrics_github_issues.gitlab:main",
-            "ssl-metrics-github-issues-graph = ssl_metrics_github_issues.graph:main",
+            "clime-bz-issues = clime_issues.bugzilla:main",
+            "clime-gh-issues = clime_issues.github:main",
+            "clime-gl-issues = clime_issues.gitlab:main",
+            "clime-issues-graph = clime_issues.graph:main",
         ]
     },
 )

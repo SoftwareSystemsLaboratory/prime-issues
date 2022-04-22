@@ -1,38 +1,24 @@
-# Software Systems Laboratory Metrics GitHub Issues Collector
+# CLIME Issues
 
-> A `python` tool that lets users download/ collect issues from a GitHub repository
-
-![[https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue](https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue)](https://img.shields.io/badge/python-3.9.6%20%7C%203.10-blue)
-[![DOI](https://zenodo.org/badge/402158914.svg)](https://zenodo.org/badge/latestdoi/402158914)
-[![Release Project](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-github-issues/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/SoftwareSystemsLaboratory/ssl-metrics-git-github-issues/actions/workflows/release.yml)
-![[https://img.shields.io/badge/license-BSD--3-yellow](https://img.shields.io/badge/license-BSD--3-yellow)](https://img.shields.io/badge/license-BSD--3-yellow)
+> A tool to download issue metadata from online issue trackers
 
 ## Table of Contents
 
-- [Software Systems Laboratory Metrics GitHub Issues Collector](#software-systems-laboratory-metrics-github-issues-collector)
+- [CLIME Issues](#clime-issues)
   - [Table of Contents](#table-of-contents)
   - [About](#about)
-  - [Developer Tooling](#developer-tooling)
-    - [Operating System](#operating-system)
+    - [Licensing](#licensing)
   - [How To Use](#how-to-use)
     - [Installation](#installation)
     - [Command Line Arguements](#command-line-arguements)
 
 ## About
 
-The Software Systems Laboratory (SSL) GitHub Issues Collector Project is a `python` tool that lets users download/ collect issues from a GitHub repository.
+The Software Systems Laboratory (SSL) CLIME  Issues project is a tool to download issue metadata from online issue trackers. Currently including GitLab, GitHub, and Bugzilla.
+
+### Licensing
 
 This project is licensed under the BSD-3-Clause. See the [LICENSE](LICENSE) for more information.
-
-## Developer Tooling
-
-To maximize the utility of this project and the greater SSL Metrics project, the following software packages are **required**:
-
-### Operating System
-
-All tools developed for the greater SSL Metrics project **must target** Mac OS and Linux. SSL Metrics software is not supported or recommended to run on Windows *but can be modified to do so at your own risk*.
-
-It is recomendded to develop on Mac OS or Linux. However, if you are on a Windows machine, you can use WSL to develop as well.
 
 ## How To Use
 
@@ -40,8 +26,8 @@ It is recomendded to develop on Mac OS or Linux. However, if you are on a Window
 
 You can install the tool via `pip` with either of the two following one-liners:
 
-- `pip install --upgrade pip ssl-metrics-meta`
-- `pip install --upgrade pip ssl-metrics-github-issues`
+- `pip install --upgrade pip clime-metrics`
+- `pip install --upgrade pip clime-issues`
 
 ### Command Line Arguements
 
