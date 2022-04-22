@@ -10,7 +10,8 @@ from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
 from ssl_metrics_github_issues.args import gitlabArgs
-
+from clime_issues.args import gitlabArgs
+from clime_issues.version import version
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
@@ -81,6 +82,10 @@ def computeValues(data: list) -> list:
 
 def main() -> None:
     args: Namespace = gitlabArgs()
+
+    if args.version:
+        print(f"clime-gl-issues-collect version {version()}")
+        quit(0)
 
     raw: list = iterateAPI(repo=args.repository, token=args.token)
     data: list = computeValues(raw)

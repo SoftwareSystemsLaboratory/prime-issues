@@ -5,8 +5,8 @@ from pandas import DataFrame
 from progress.bar import Bar
 from requests import Response, get
 
-from ssl_metrics_github_issues.args import bugzillaArgs
-
+from clime_issues.args import bugzillaArgs
+from clime_issues.version import version
 
 def getIssueResponse(url: str, bug: int) -> Response:
     apiURL: str = f"{url}/rest/bug/{bug}"
@@ -15,6 +15,10 @@ def getIssueResponse(url: str, bug: int) -> Response:
 
 def main() -> None:
     args: Namespace = bugzillaArgs()
+
+    if args.version:
+        print(f"clime-bz-issues-collect version {version()}")
+        quit(0)
 
     df: DataFrame = pandas.read_csv(args.input)
     bugIDs: list = df["Bug ID"].tolist()

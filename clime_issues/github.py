@@ -9,8 +9,8 @@ from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
-from ssl_metrics_github_issues.args import githubArgs
-
+from clime_issues.args import githubArgs
+from clime_issues.version import version
 
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
@@ -84,6 +84,10 @@ def computeValues(data: list) -> list | None:
 
 def main() -> None:
     args: Namespace = githubArgs()
+
+    if args.version:
+        print(f"clime-gh-issues-collect version {version()}")
+        quit(0)
 
     logging.basicConfig(
         level=logging.DEBUG,
