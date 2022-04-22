@@ -9,7 +9,6 @@ from progress.bar import Bar
 from requests import Response, get
 from requests.models import CaseInsensitiveDict
 
-from ssl_metrics_github_issues.args import gitlabArgs
 from clime_issues.args import gitlabArgs
 from clime_issues.version import version
 
