@@ -62,7 +62,7 @@ setup(
         "ssl",
         "thousands of lines of code",
         "tool",
-        "vcs"
+        "vcs",
     ],
     python_requires=">=3.9",
     install_requires=[

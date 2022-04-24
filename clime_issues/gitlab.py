@@ -12,6 +12,7 @@ from requests.models import CaseInsensitiveDict
 from clime_issues.args import gitlabArgs
 from clime_issues.version import version
 
+
 def getIssueResponse(repo: str, token: str, page: int = 1) -> Response:
     requestHeaders: dict = {
         "PRIVATE-TOKEN": token,

@@ -7,6 +7,7 @@ from pandas import DataFrame
 from clime_issues.args import graphArgs
 from clime_issues.version import version
 
+
 def computeXY(
     df: DataFrame,
     xKey: str,

@@ -8,6 +8,7 @@ from requests import Response, get
 from clime_issues.args import bugzillaArgs
 from clime_issues.version import version
 
+
 def getIssueResponse(url: str, bug: int) -> Response:
     apiURL: str = f"{url}/rest/bug/{bug}"
     return get(url=apiURL)
