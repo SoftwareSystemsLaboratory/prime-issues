@@ -34,7 +34,7 @@ def main() -> None:
             bar.next()
 
     data: DataFrame = DataFrame(json)
-    data.to_json(args.output)
+    data.to_json(args.output, indent=4)
 
 
 if __name__ == "__main__":

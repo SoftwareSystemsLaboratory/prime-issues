@@ -91,7 +91,7 @@ def main() -> None:
     data: list = computeValues(raw)
     df: DataFrame = DataFrame(data)
 
-    df.T.to_json(args.output)
+    df.T.to_json(args.output, indent=4)
 
 
 if __name__ == "__main__":

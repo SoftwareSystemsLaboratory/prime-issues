@@ -105,7 +105,7 @@ def main() -> None:
         data = [x for x in data if x.get("pull_request") is None]
 
     df: DataFrame = DataFrame(data)
-    df.T.to_json(args.output)
+    df.T.to_json(args.output, indent=4)
 
 
 if __name__ == "__main__":
