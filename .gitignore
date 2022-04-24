@@ -136,4 +136,3 @@ dmypy.json
 !.zenodo.json
 .idea
 *.csv
-build.bash
